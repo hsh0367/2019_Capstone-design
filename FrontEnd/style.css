@@ -1,0 +1,31 @@
+.backgroundDiv{
+  width: 1920px;
+  height: 1080px;
+  margin : 10px auto;
+  border : 1px solid black;
+  background-color: #f0f0f0;
+}
+.headerDiv{
+  height: 100px;
+  padding: 20px;
+  margin-bottom:10px;
+  background-color: #9bbbd4;
+  border:1px solid #bcbcbc;
+}
+.contentDiv{
+  width: 960px;
+  height: 800px;
+  padding:20px;
+  margin-bottom: 20px;
+  background-color: #9bbbd4;
+  border:1px solid #bcbcbc;
+}
+@media (max-width: 960px){
+  .backgroundDiv{
+    width: auto;
+  }
+  .contentDiv{
+      float: none;
+      width: auto;
+    }
+}

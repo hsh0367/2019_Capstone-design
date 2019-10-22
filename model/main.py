@@ -1,7 +1,9 @@
-import tensorflow as tf
+import keras
 import numpy as np
 import os.path as path
-from scipy import misc
+from keras.models import Sequential
+from keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten
+
 
 def image_set():
     image_path = ''
@@ -10,12 +12,44 @@ def image_set():
     image_size = np.asarray([images.shape[1], images.shape[2],images.shape[3]])
     print(image_size)
 
-def model(X):
-    print("model....")
 
+
+def createModel():
+    model = Sequential()
+    model.add(Conv2D(32, (3, 3), padding='same', activation='relu', input_shape=input_shape))
+    model.add(Conv2D(32, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.25))
+
+    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(64, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.25))
+
+    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(64, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.25))
+
+    model.add(Flatten())
+    model.add(Dense(512, activation='relu'))
+    model.add(Dropout(0.5))
+
+    return model
 
 def main():
     print("Start....")
+
+    train_data = ()
+
+    print("Model build....")
+    model1 = createModel()
+
+    print("Train start....")
+
+
+    model1 = createModel()
+
 
 
 

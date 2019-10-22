@@ -76,11 +76,11 @@ def load_binfile(file_name):
     try:
         os.makedirs(data_folder_path)
         print('mkdir -p', data_folder_path)
-        data_processing(file_name, data_folder_path)
+        data_preprocessing(file_name, data_folder_path)
     except OSError as exc:
         if exc.errno == errno.EEXIST and os.path.isdir(data_folder_path + "/" + data_folder_name + "/"):
             print('already exist folder')
-            data_processing(data_file_name)
+            data_preprocessing(data_file_name)
             pass
         else:
             raise

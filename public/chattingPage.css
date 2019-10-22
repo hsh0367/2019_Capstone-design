@@ -10,6 +10,20 @@
   background-color: #9bbbd4;
   border:1px solid #bcbcbc;
 }
+.logoDiv{
+  width: 25px;
+  height: 25px;
+  margin-left: 3%;
+  display: inline;
+  background: url( "conversationLogo.png" ) no-repeat;
+  background-size: contain;
+}
+.headerText{
+  display: inline;
+  font-size: 15px;
+
+  margin-left: 5%;
+}
 .containerDiv{
   width: 100%;
   display: flex;
@@ -42,13 +56,6 @@
   width:50%;
   vertical-align: middle;
 }
-input.skatchStart{
-  width:15%;
-  height: 20px;
-  background: url( "photoPlus.png" ) no-repeat;
-  vertical-align: middle;
-  /* font-size:7px; */
-}
 .chat{
   width:15%;
   height: 20px;
@@ -58,6 +65,19 @@ input.skatchStart{
   border: 1px solid #7F7F7F;
   border-radius: 6px;
   vertical-align: middle;
+  /* float: right; */
+  /* float: right; */
+}
+
+.skatchStart{
+  width:7%;
+  height: 20px;
+  border: 0px solid #7F7F7F;
+  background: url( "photoPlus.png" ) no-repeat;
+  background-size: contain;
+  vertical-align: middle;
+float: right;
+  /* font-size:7px; */
 }
 @media (max-width: 960px){
   .backgroundDiv{

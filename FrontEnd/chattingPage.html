@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8"></meta>
+    <link rel="stylesheet" type="text/css" href="/chattingPage.css">
+  </head>
+
+  <body>
+    <div class="backgroundDiv">
+      <div class="headerDiv">
+        <div class="logoDiv" />
+        <p class="headerText">Skatch-based chat</p>
+      </div>
+      </div>
+
+      <div class="containerDiv">
+        배경
+        <!--채팅로그-->
+        <textarea id="chatLog" class="chat_Log" readonly></textarea>
+        <form class="chatFormat" id="chat">
+          <input id="name" class="name" type="text" readonly>
+          <input id="message" class="message" type="text">
+          <input type="submit" class="chat" value="chat"/>
+          <input type="button" class="skatchStart" onClick="showPopUp()"/>
+
+        <div id="box" class="box">
+          <script src = "/socket.io/socket.io.js"></script>
+          <script src="//code.jquery.com/jquery-1.11.1.js"></script>
+
+          <script>
+            var socket = io();
+            $('#chat').on('submit', function(e){
+              socket.emit('send message', $('#name').val(), $('#message').val());
+              $('#message').val('');
+              $("#message").focus();
+              e.preventDefault();
+            });
+
+            socket.on('receive message', function(msg){
+              $('#chatLog').append(msg+'\n');
+              var JSAlert = require('js-alert');
+              JSAlert.alert(msg);
+              $('#chatLog').scrollTop($('#chatLog')[0].scrollHeight);
+            });
+
+            socket.on('change name', function(name){
+              $('#name').val(name);
+            });
+
+            var showPopUp = function(){
+              console.log("gd");
+              // console.log(__dirname);
+              // __dirname + '/FrontEnd/chattingPage.html'
+              var popUpUrl ="/draw.html";
+              var popUpOption = "width=1000, height=500 resiresizable=no, scrollbars=no, status=no;";
+
+              window.open(popUpUrl,"draw",popUpOption);
+            }
+
+        </script>
+
+        </div>
+
+  </body>
+
+</html>

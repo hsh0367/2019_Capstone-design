@@ -59,7 +59,8 @@ def data_preprocessing(filename, path):
         plt.close()
         print("save png:", save_path)
         count += 1
-
+        if count == 6001:
+            break
 
 def is_list(files):
     if type(files) == str:

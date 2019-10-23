@@ -7,7 +7,7 @@ var canvas, ctx;
 
 window.onload = function() {
   canvas = document.getElementById("canvas");
-  trash_button = docement.getElementById("trash_b");
+  trash_button = document.getElementById("trash_b");
   ctx = canvas.getContext("2d");
 
   // event type

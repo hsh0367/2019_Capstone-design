@@ -1,15 +1,18 @@
+//expree를 사용하여 http서버 생성
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
+//생성된 sever를 socket.io 서버로 업그레이드
 var io = require('socket.io')(http);
-var router = express.Router();
-//모든 request는 cleint를 responce하도록
+// var router = express.Router();
+
+//모든 request는 cleint를 responce하도록 라우터임
 app.get('/',function(req, res){
   res.sendFile(__dirname + '/FrontEnd/chattingPage.html');
 });
-// router.get('/draw',function(req, res){
-//   res.sendFile(__dirname + '/FrontEnd/draw.html');
-// });
+app.get('/draw',function(req, res){
+  res.sendFile(__dirname + '/FrontEnd/draw.html');
+});
 
 //io.on(EVENT,함수)는 서버에 전달된 EVENT를 인식하여 함수를 실행시키는 event listener
 var count = 1;
@@ -31,11 +34,15 @@ io.on('connection', function(socket){
 
 });
 
-http.listen(3066, function(){
+http.listen(3053, function(){
   console.log('server on!');
+  // console.log(__dirname);
+  // console.log(app.res);
 });
 
 app.use(express.static(__dirname +'/public'));
+
+
 // app.use(express.static(__dirname +'/FrontEnd/draw.html'));
 
 // io.on('connection',(socketServer)=>{

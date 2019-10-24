@@ -27,7 +27,7 @@
 ## 2. 주요 기술
 > ### Back-End
 - Model : Python
-- Sever : Diango
+- Server : Diango, Node.JS
 > ### Front-End
 - View : Java Script, Html, CSS
 * * *

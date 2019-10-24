@@ -16,61 +16,41 @@ def folder_list(file_path):
 
         #build fix folder
         target_path = '/home/mll/Capstone/fix_image_set'
-        print("{}/{}".format(target_path, data_folder))
-        os.mkdir(target_path + "/" + data_folder + "/train/")
-        os.mkdir(target_path + "/" + data_folder + "/vaild/")
-        os.mkdir(target_path + "/" + data_folder + "/test/")
+        print("{} to {} dataset...".format(target_path, data_folder))
+        os.mkdir(target_path + "/train/" + data_folder )
+        os.mkdir(target_path + "/valid/" + data_folder)
+        os.mkdir(target_path + "/test/" + data_folder)
 
         #case is 3 train, vaild, test
         #image total 6000
         #train 5000 vaild 500 test 500
 
-        count=0
+        count = 0
         for imagefile in data_folder_list:
             image = Image.open(data_folder_path+"/"+imagefile)
             image = image.convert('RGB')
             save_image = image.resize((255,255))
             save_image = save_image.rotate(180)
 
+            '''
+            if(count<6000):
+                save_image.save(target_path + "/train/" + data_folder + "/" + imagefile, quality=100)
+            elif (count >= 6000 & count < 6500):
+                save_image.save(target_path + "/test/" + data_folder + "/" + imagefile, quality=100)
+            elif (count >= 6500 & count < 7000):
+                save_image.save(target_path + "/valid/" + data_folder + "/" + imagefile, quality=100)
+            '''
+            if (count < 6000):
+                save_image.save(target_path + "/train/" + data_folder + "/" + imagefile, quality=100)
+            elif (count >= 6000 and count < 6500):
+                save_image.save(target_path + "/test/" + data_folder + "/" + imagefile, quality=100)
+            elif (count >= 6500 and count < 7000):
+                save_image.save(target_path + "/valid/" + data_folder + "/" + imagefile, quality=100)
 
-            if(count<5000):
-                save_image.save(target_path + "/" + data_folder + "/train/" + imagefile, quality=100)
-            elif (count >= 5000 & count<5500):
-                save_image.save(target_path + "/" + data_folder + "/vaild/" + imagefile, quality=100)
-            else:
-                save_image.save(target_path + "/" + data_folder + "/test/" + imagefile, quality=100)
-
-        print("done!")
-
-
-'''
-attractionList = ['angel', 'statue of liberty', 'niagara falls', 'colosseum', 'pyramid']
-    attractionFolderList = ['eiffel', 'liberty', 'niagara', 'colosseum', 'pyramid']
-    for attractionFolder in attractionFolderList:
-        image_dir = "./data_orign/" + attractionFolder + "/"
-        target_resize_dir = "./data/" + attractionFolder + "/"
-        target_rotate_dir = "./data_rotate/" + attractionFolder + "/"
-        if not os.path.isdir(target_resize_dir):
-            os.makedirs(target_resize_dir)
-        if not os.path.isdir(target_rotate_dir):
-            os.makedirs(target_rotate_dir)
-        files = glob.glob(image_dir + "*.*")
-        print(len(files))
-        count = 1;
-        size = (224, 224)
-        for file in files:
-            im = Image.open(file)
-            im = im.convert('RGB')
-            print("i: ", count, im.format, im.size, im.mode, file.split("/")[-1])
-            count += 1
-            im = ImageOps.fit(im, size, Image.ANTIALIAS, 0, (0.5, 0.5))
-            im.save(target_resize_dir + file.split("/")[-1].split(".")[0] + ".jpg", quality=100)
-            im.rotate(90).save(target_rotate_dir + "resize_" + file.split("/")[-1].split(".")[0] + ".jpg", quality=100)
-'''
-
-
-#def image_separate():
-
+            image.close()
+            save_image.close()
+            count = count+1
+        print("{} done!".format(data_folder))
 
 
 
@@ -78,7 +58,6 @@ def main():
 
     print("Image rorate start...")
     folder_list("/home/mll/Capstone/image_set")
-    #image_separate("/home/mll/Capstone/image_set")
 
 
 if __name__ == "__main__":

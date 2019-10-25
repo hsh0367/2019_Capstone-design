@@ -1,7 +1,7 @@
 var pos = {
   drawable: false,
   x: -1,
-  y:-1
+  y: -1
 };
 var canvas, ctx;
 
@@ -58,7 +58,7 @@ function finishDraw(){
 }
 
 function getPosition(event){
-  var x = event.pageX - canvas.offsetLeft - 10;
-  var y = event.pageY - canvas.offsetTop - 380;
+  var x = event.pageX - canvas.offsetLeft -5;
+  var y = event.pageY - canvas.offsetTop -190;
   return {X: x, Y: y};
 }

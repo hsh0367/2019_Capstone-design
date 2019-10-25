@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <link rel="stylesheet" href="/drawpage.css">
   <head>
+    <link rel="stylesheet" type="text/css" href="/drawpage.css">
     <meta charset="utf-8">
     <title>draw page</title>
   </head>
@@ -28,15 +28,15 @@
        </div>
        <div class="draw">
          <!-- canvas -->
-         <canvas id="canvas" width="960px" height="705px"></canvas>
+         <canvas id="canvas" width="480px" height="540px"></canvas>
          <div class="buttons">
-           <div class="send">send</div>
-           <div class="trash" id="trash_b">trash</div>
-           <div class="cancel">cancel</div>
+           <div class="send"></div>
+           <div class="trash" id="trash_b"></div>
+           <div class="cancel"></div>
          </div>
        </div>
 
+       <script src="/canvas.js"></script>
     </div>
-    <script src="canvas.js"></script>
   </body>
 </html>

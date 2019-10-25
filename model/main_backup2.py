@@ -75,7 +75,7 @@ def main():
     print("(1)Train model | (2)Load saved model")
     number = input()
 
-    if(number==1):
+    if(number=='1'):
         print("Training....")
         model1.fit_generator(train_gen, steps_per_epoch=50, epochs=20, validation_data=valid_gen, validation_steps=10)
         print("Input model's name")
@@ -86,7 +86,7 @@ def main():
         with open('{}_model.json'.format(name), "w") as json_file:
             json_file.write(model_json)
 
-    elif(number==2):
+    elif(number=='2'):
         from keras.models import load_model
         model = load_model('save_model.h5')
         '''

@@ -22,10 +22,10 @@ socket.on('change name', function(name){
 
 function showPopUp(){
   var ifram = document.getElementById('iframeid');
-  if(ifram.style.display=='none'){
-    ifram.style.display = 'block';
+  if(ifram.style.visibility=='hidden'){
+    ifram.style.visibility = 'visible';
   }else{
-    ifram.style.display='none';
+    ifram.style.visibility='hidden';
   }
 }
 

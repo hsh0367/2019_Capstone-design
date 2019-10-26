@@ -58,7 +58,7 @@ function finishDraw(){
 }
 
 function getPosition(event){
-  var x = event.pageX - canvas.offsetLeft -5;
-  var y = event.pageY - canvas.offsetTop -190;
+  var x = event.pageX - canvas.offsetLeft ;
+  var y = event.pageY - canvas.offsetTop - 180;
   return {X: x, Y: y};
 }

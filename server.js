@@ -37,7 +37,7 @@ io.on('connection', function(socket){
   });
 });
 
-http.listen(3051, function(){
+http.listen(3000, function(){
   console.log('server on!');
 });
 

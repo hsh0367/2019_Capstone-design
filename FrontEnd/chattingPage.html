@@ -1,39 +1,52 @@
 <!DOCTYPE html>
 <html>
-
   <head>
     <meta charset="utf-8"></meta>
+<<<<<<< HEAD
     <link rel="stylesheet" type="text/css" href="../public/chattingPage.css">
+=======
+    <link rel="stylesheet" type="text/css" href="/chattingPage.css">
+    <title>chatting Page</title>
+>>>>>>> 8e68dd4873aab5612665af6eccce12d5dd6be66f
   </head>
 
   <body>
+
     <div class="backgroundDiv">
+
+      <!--header-->
       <div class="headerDiv">
-        <div class="logoDiv" />
-        <p class="headerText">Skatch-based chat</p>
-      </div>
+        <img class="logoDiv" src="/conversationLogo.png"></img>
+        <!-- <div class="logoDiv"></div> -->
+        <p class="headerText">Skatch-based Chat</p>
       </div>
 
+      <!--body-->
       <div class="containerDiv">
-        배경
         <!--채팅로그-->
+<<<<<<< HEAD
         <!-- <textarea id="chatLog" class="chat_Log" readonly></textarea> -->
         <div id="chatLog" class="chat_Log"style="overflow:scroll";>
           <!-- 채팅 메시지 영역 -->
           <!-- 텍스트 및 이미지가 올라감 -->
 
         </div>
+=======
+        <div id="chatLog" class="chat_Log"  readonly></div>
+>>>>>>> 8e68dd4873aab5612665af6eccce12d5dd6be66f
 
         <form class="chatFormat" id="chat">
-          <input id="name" class="name" type="text" readonly>
+          <input id="name" class="name" type="text" >
           <input id="message" class="message" type="text" placeholder="메시지를 입력하세요.">
-          <input type="submit" class="chat" value="chat"/>
+          <input type="submit" class="chat" value="Send"/>
           <input type="button" class="skatchStart" onClick="showPopUp()"/>
+        </form>
 
         <div id="box" class="box">
           <script src = "/socket.io/socket.io.js"></script>
           <script src="//code.jquery.com/jquery-1.11.1.js"></script>
 
+<<<<<<< HEAD
           <script>
           var socket = io()
 
@@ -130,7 +143,14 @@
 
         </script>
 
+=======
+>>>>>>> 8e68dd4873aab5612665af6eccce12d5dd6be66f
         </div>
+      </div>
+
+    </div>
+      <iframe src="draw" style="margin-left:10px; visibility:hidden;" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" id="iframeid" align="left" width="490px" height="550px"></iframe>
+      <script src="/chattingPage.js"></script>
 
   </body>
 

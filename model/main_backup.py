@@ -1,77 +1,37 @@
 import keras
+import matplotlib
 import numpy as np
 import os
 from keras.models import Sequential
 from keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten
 from keras.preprocessing.image import ImageDataGenerator
 
+'''
+    - Backup at 10.28
+    - Build save model function
+
+'''
+
+
 def image_set():
-    image_path = '/home/mll/Capstone/fix_image_set'
-
-    folder = os.listdir(image_path)
-    folder.sort()
-    label_list = []
-
-    for data_folder in folder:
-        data_folder_path = os.path.join(image_path, '{}'.format(data_folder))
-        data_folder_list = os.listdir(data_folder_path)
-        data_folder_list.sort()
-        label_list.append(data_folder)
-
-        for image in data_folder:
-            print("")
-
-
-def createModel():
-    model = Sequential()
-    model.add(Conv2D(32, (3, 3), padding='same', activation='relu', input_shape=(255,255,3)))
-    model.add(Conv2D(32, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    #model.add(Dropout(0.25))
-
-    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(64, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    #model.add(Dropout(0.25))
-
-    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(64, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-   # model.add(Dropout(0.25))
-
-    model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(128, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-
-    model.add(Flatten())
-    model.add(Dense(512, activation='relu'))
-    model.add(Dense(8, activation='softmax'))   # label count = dense label.
-
-    return model
-
-
-def main():
-    print("Start....")
-
     print("Get images....")
     # image_set()
 
-    batchsize = 32
+    batchsize = 64
     image_size = (255, 255)
 
     #
     train_gen = ImageDataGenerator().flow_from_directory(
         '/home/mll/Capstone/fix_image_set/train/',
         class_mode='categorical',
-        batch_size = batchsize,
+        batch_size=batchsize,
         target_size=image_size
     )
 
     test_gen = ImageDataGenerator().flow_from_directory(
         '/home/mll/Capstone/fix_image_set/test/',
         class_mode='categorical',
-        batch_size = batchsize,
+        batch_size=batchsize,
         target_size=image_size
     )
     valid_gen = ImageDataGenerator().flow_from_directory(
@@ -81,28 +41,133 @@ def main():
         target_size=image_size
     )
 
+    return train_gen, test_gen, valid_gen
 
-    print("Model build....")
-    model1 = createModel()
+
+def createModel():
+    model = Sequential()
+    model.add(Conv2D(32, (3, 3), padding='same', activation='sigmoid', input_shape=(255, 255, 3)))
+    model.add(Conv2D(32, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.25))
+
+    model.add(Conv2D(16, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(16, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.25))
+
+    model.add(Conv2D(16, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(16, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.25))
+
+    model.add(Flatten())
+    model.add(Dense(128, activation='relu'))
+    model.add(Dense(8, activation='softmax'))  # label count = dense label.
+
+    return model
+
+import matplotlib.pyplot as plt
+
+def plt_show_loss(history):
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('Model Loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(['Train', 'Test'], loc=0)
+
+
+def plt_show_acc(history):
+    plt.plot(history.history['acc'])
+    plt.plot(history.history['val_acc'])
+    plt.title('Model accuracy')
+    plt.ylabel('Accuracy')
+    plt.xlabel('Epoch')
+    plt.legend(['Train', 'Test'], loc=0)
+
+
+
+def main():
+    print("Start....")
+
+    train_gen, test_gen, valid_gen = image_set()
+    batchsize = 64
 
     #model 가시화
     #from IPython.display import SVG
     #from keras.utils.vis_utils import model_to_dot
     #SVG(model_to_dot(model1, show_shapes=True).create(prog='dot', format='svg'))
 
-    model1.summary()
-    model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 
-    print("Training....")
-    model1.fit_generator(train_gen, steps_per_epoch=1000, epochs=100, validation_data=valid_gen, validation_steps=10)
-    model1.save_weights('save_model.h5')
+    print("(1) Train model | (2) Load saved model")
+    number = input()
+
+    if(number=="1"):
+        print("Model build....")
+        model1 = createModel()
+        model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+        model1.summary()
+        '''
+        from IPython.display import SVG
+        from keras.utils.vis_utils import model_to_dot
+        import matplotlib
+        SVG(model_to_dot(model1, show_shapes=True).create(prog='dot', format='svg'))
+        '''
+
+        print("Training....")
+        history = model1.fit_generator(train_gen, steps_per_epoch=50, epochs=20, validation_data=valid_gen, validation_steps=10)
+
+        #Saving model
+        #Save sturcture to json file, weight to h5 file.
+
+        print("Input model's name")
+        name = input()
+        model1.save('save_model/{}.h5'.format(name))
+
+        plt_show_loss(history)
+        plt.show()
+
+        plt_show_acc(history)
+        plt.show()
+
+
+    elif(number=="2"):
+        from keras.models import load_model
+
+
+        model_list = os.listdir('./save_model')
+        print('---- Saved model list ----')
+        for model_file in model_list:
+            print(model_file)
+
+        print("Input model_structure 's name (json only)")
+        name = input()
+        model1 = load_model('./save_model/{}'.format(name))
+        '''
+        from keras.models import model_from_json 
+        json_file = open('save_model/{}'.format(name), "r")
+        loaded_model_json = json_file.read()
+        json_file.close() 
+        loaded_model = model_from_json(loaded_model_json)
+        '''
+        model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy']) # model compile
+
+
+    else:
+        print("wrong input")
+        exit()
+
     print("Test....")
-    scores = model1.evaluate_generator(test_gen, steps=5)
-    print("%.2f%%" %(scores,100))
+    scores = model1.evaluate_generator(test_gen, steps=50)
+
+    print((scores,100))
 
 
     #recommended labels top3
+
+
 
 
 if __name__ == "__main__":

@@ -6,6 +6,13 @@ from keras.models import Sequential
 from keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten
 from keras.preprocessing.image import ImageDataGenerator
 
+'''
+    - Keras base image classification 
+    - Build save model function
+
+'''
+
+
 def image_set():
     print("Get images....")
     # image_set()
@@ -60,6 +67,25 @@ def createModel():
 
     return model
 
+import matplotlib.pyplot as plt
+
+def plt_show_loss(history):
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('Model Loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(['Train', 'Test'], loc=0)
+
+
+def plt_show_acc(history):
+    plt.plot(history.history['acc'])
+    plt.plot(history.history['val_acc'])
+    plt.title('Model accuracy')
+    plt.ylabel('Accuracy')
+    plt.xlabel('Epoch')
+    plt.legend(['Train', 'Test'], loc=0)
+
 
 
 def main():
@@ -91,19 +117,20 @@ def main():
         '''
 
         print("Training....")
-        model1.fit_generator(train_gen, steps_per_epoch=50, epochs=20, validation_data=valid_gen, validation_steps=10)
+        history = model1.fit_generator(train_gen, steps_per_epoch=50, epochs=50, validation_data=valid_gen, validation_steps=10)
 
         #Saving model
         #Save sturcture to json file, weight to h5 file.
 
         print("Input model's name")
         name = input()
-        model1.save_weights('save_model/{}_model.h5'.format(name))
-        '''
-        model_json = model1.to_json()
-        with open('save_model_structure/{}.json'.format(name), "w") as json_file:
-            json_file.write(model_json)
-        '''
+        model1.save('save_model/{}.h5'.format(name))
+
+        plt_show_loss(history)
+        plt.show()
+
+        plt_show_acc(history)
+        plt.show()
 
 
     elif(number=="2"):
@@ -117,7 +144,7 @@ def main():
 
         print("Input model_structure 's name (json only)")
         name = input()
-        model1 = load_model('save_model/{}'.format(name))
+        model1 = load_model('./save_model/{}'.format(name))
         '''
         from keras.models import model_from_json 
         json_file = open('save_model/{}'.format(name), "r")

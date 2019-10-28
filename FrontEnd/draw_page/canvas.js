@@ -1,14 +1,23 @@
+var canv = {
+  width: 960,
+  height: 705
+};
+
 var pos = {
   drawable: false,
   x: -1,
   y:-1
 };
 var canvas, ctx;
+var re1, re2, re3;
 
 window.onload = function() {
   canvas = document.getElementById("canvas");
-  trash_button = docement.getElementById("trash_b");
   ctx = canvas.getContext("2d");
+
+  re1 = document.getElementById("recommend1");
+  re2 = document.getElementById("recommend2");
+  re3 = document.getElementById("recommend3");
 
   // event type
   canvas.addEventListener("mousedown", listener);
@@ -16,6 +25,27 @@ window.onload = function() {
   canvas.addEventListener("mousemove", listener);
   canvas.addEventListener("mouseout", listener);
 };
+
+function recommend_clicked(image){
+  recommend_border_init();
+  switch (image) {
+    case 1:
+      re1.style.border = "5px solid #0000FF";
+      break;
+    case 2:
+      re2.style.border = "5px solid #0000FF";
+      break;
+    case 3:
+      re3.style.border = "5px solid #0000FF";
+      break;
+  }
+}
+
+function recommend_border_init(){
+  re1.style.border = "1px solid #797979";
+  re2.style.border = "1px solid #797979";
+  re3.style.border = "1px solid #797979";
+}
 
 function listener(event){
   switch (event.type) {
@@ -61,4 +91,20 @@ function getPosition(event){
   var x = event.pageX - canvas.offsetLeft - 10;
   var y = event.pageY - canvas.offsetTop - 380;
   return {X: x, Y: y};
+}
+
+function button_clicked(button){
+  switch (button) {
+    case 0:
+      // send_button clicked
+      break;
+    case 1:
+      // trash_button clicked
+      ctx.clearRect(0, 0, canv.width, canv.height);
+      ctx.beginPath();
+      break;
+    case 2:
+      // cancel_button clicked
+      break;
+  }
 }

@@ -1,4 +1,5 @@
-.wrapper{
+
+.wrapper {
   display: table;
   width:960px;
   height:1080px;
@@ -33,14 +34,17 @@
   display: table-cell;
   width: 320px;
   height: 320px;
-  text-align: center;
+  box-sizing: border-box;
   border: 1px solid #797979;
+  vertical-align:middle;
+  text-align: center;
 }
 
 .image_container img{
-  width: 320px;
-  height: 320px;
+  width: auto;
+  height: auto;
 }
+
 
 .draw{
   width:100%;
@@ -65,4 +69,43 @@
   background-color: #FFFFFF;
   border-radius: 50%;
   border: 1px solid #797979;
+}
+
+.send_button {
+  background-image: url("resource/send.png");
+  background-color: #FFFFFF;
+  background-repeat: no-repeat;
+  border: 1px solid #797979;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-position: center;
+  margin-right: 10px;
+  outline:none;
+}
+
+.trash_button {
+  background-image: url("resource/trash.png");
+  background-repeat: no-repeat;
+  background-color: #FFFFFF;
+  border: 1px solid #797979;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-position: center;
+  margin-right: 10px;
+  outline:none;
+}
+
+.cancel_button {
+  background-image: url("resource/cancel.png");
+  background-repeat: no-repeat;
+  background-color: #FFFFFF;
+  border: 1px solid #797979;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-position: center;
+  margin-right: 15px;
+  outline:none;
 }

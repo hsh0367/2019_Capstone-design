@@ -21,7 +21,7 @@ socket.on('change name', function(name){
 
 
 function showPopUp(){
-  var ifram = document.getElementById('iframeid');
+  var ifram = document.getElementById('side');
   if(ifram.style.visibility=='hidden'){
     ifram.style.visibility = 'visible';
   }else{

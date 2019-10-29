@@ -7,10 +7,12 @@ from keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten
 from keras.preprocessing.image import ImageDataGenerator
 
 '''
-    - Backup at 10.28
-    - Build save model function
-
+    - Backup 10.29 
+    - Last model : 1029_79%.h5
+    - Last acc : 78.94%
+    - Delete svg model visualize part 
 '''
+
 
 
 def image_set():
@@ -63,7 +65,7 @@ def createModel():
 
     model.add(Flatten())
     model.add(Dense(128, activation='relu'))
-    model.add(Dense(8, activation='softmax'))  # label count = dense label.
+    model.add(Dense(56, activation='softmax'))  # label count = dense label.
 
     return model
 
@@ -108,7 +110,7 @@ def main():
         print("Model build....")
         model1 = createModel()
         model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-        model1.summary()
+
         '''
         from IPython.display import SVG
         from keras.utils.vis_utils import model_to_dot
@@ -117,7 +119,7 @@ def main():
         '''
 
         print("Training....")
-        history = model1.fit_generator(train_gen, steps_per_epoch=50, epochs=20, validation_data=valid_gen, validation_steps=10)
+        history = model1.fit_generator(train_gen, steps_per_epoch=500, epochs=80, validation_data=valid_gen, validation_steps=100)
 
         #Saving model
         #Save sturcture to json file, weight to h5 file.
@@ -145,14 +147,9 @@ def main():
         print("Input model_structure 's name (json only)")
         name = input()
         model1 = load_model('./save_model/{}'.format(name))
-        '''
-        from keras.models import model_from_json 
-        json_file = open('save_model/{}'.format(name), "r")
-        loaded_model_json = json_file.read()
-        json_file.close() 
-        loaded_model = model_from_json(loaded_model_json)
-        '''
+
         model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy']) # model compile
+
 
 
     else:
@@ -161,7 +158,7 @@ def main():
 
     print("Test....")
     scores = model1.evaluate_generator(test_gen, steps=50)
-
+    model1.summary()
     print((scores,100))
 
 

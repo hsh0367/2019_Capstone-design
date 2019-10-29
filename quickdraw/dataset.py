@@ -4,11 +4,13 @@ import matplotlib.pyplot as plt
 import os
 import errno
 import multiprocessing
+from subprocess import call
 
 
 class QuickDrawData:
     bin_folder_path = ""
     bin_list = []
+    save_folder = "/home/mll/Capstone/image_set"
     remove_name = "full%2Fbinary%2F"
 
     def init(self, bin_folder_path, bin_list):
@@ -63,18 +65,20 @@ class QuickDrawData:
             plt.close()
             print("save png:", save_path)
             count += 1
-            if count == 10:
+            if count == 6600:
                 break
 
     def load_binfile(self, files):
         for file_name in files:
             if file_name[len(file_name)-4:] == ".bin":
+                '''
                 os.rename(self.bin_folder_path + "/" + file_name,
                           self.bin_folder_path + "/" + file_name[len(self.remove_name):])
                 file_name = file_name[len(self.remove_name):]
                 print(file_name)
+                '''
                 data_folder_name = file_name[0:len(file_name) - 4]
-                data_folder_path = "./" + data_folder_name + "/"
+                data_folder_path = self.save_folder + "/" + data_folder_name + "/"
                 try:
                     os.makedirs(data_folder_path)
                     print('mkdir -p', data_folder_path)
@@ -121,4 +125,9 @@ if __name__ == "__main__":
     quickdata = QuickDrawData()
     quickdata.init(bin_folder_path, bin_list)
     quickdata.run()
+
+
+    call(["python3", "/home/mll/Capstone/2019_Capstone-design/model/image_rotate.py"])
+
+
 

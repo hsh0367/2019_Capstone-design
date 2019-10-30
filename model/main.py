@@ -5,17 +5,15 @@ import os
 from keras.models import Sequential
 from keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten
 from keras.preprocessing.image import ImageDataGenerator
-
+from PIL import Image
 '''
     - Keras base image classification 
-    - Latest update : 10.29
-    - Last model : 1029_79%.h5
-    - Last acc : 78.94%
-    - Delete svg model visualize part 
+    - Latest update : 10.30
+    - Last model : 1030_5layer_200step_100epoch.h5
+    - Last acc : 80.12%
     
-    - version : 1.01
-    - test add one more layer
-    - test start at 10.29 18:05
+    - version : 1.52
+    
 '''
 
 
@@ -70,6 +68,11 @@ def createModel(numclass):
     model.add(Conv2D(8, (3, 3), padding='same', activation='relu'))
     model.add(Conv2D(8, (3, 3), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.25))
+
+    model.add(Conv2D(8, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(8, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
 
     model.add(Flatten())
     model.add(Dense(128, activation='relu'))
@@ -97,13 +100,28 @@ def plt_show_acc(history):
     plt.legend(['Train', 'Test'], loc=0)
 
 
+def get_output():
+    batchsize = 64
+    image_size = (255, 255)
+    pred_gen = ImageDataGenerator().flow_from_directory(
+        '/home/mll/Capstone/predict_image/',
+        class_mode='categorical',
+        batch_size=batchsize,
+        target_size=image_size
+    )
+    predictions = model1.predict_generator(pred_gen)
+
+    np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
+    print(test_gen.class_indices)
+    print(predictions)
+
 
 def main():
     print("Start....")
 
     train_gen, test_gen, valid_gen = image_set()
     numclass = train_gen.num_classes
-
+    print(train_gen.num_classes)
     print("(1) Train model | (2) Load saved model")
     number = input()
 
@@ -120,7 +138,7 @@ def main():
         '''
 
         print("Training....")
-        history = model1.fit_generator(train_gen, steps_per_epoch=300, epochs=80, validation_data=valid_gen, validation_steps=100)
+        history = model1.fit_generator(train_gen, steps_per_epoch=200, epochs=100, validation_data=valid_gen, validation_steps=100)
 
         #Saving model
         #Save sturcture to json file, weight to h5 file.
@@ -152,23 +170,46 @@ def main():
         model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy']) # model compile
 
 
-
     else:
         print("wrong input")
         exit()
 
 
-
     print("Test....")
-    scores = model1.evaluate_generator(test_gen, steps=50)
+    scores = model1.evaluate_generator(test_gen, steps=10)
+    print("%s: %.2f%%" % (model1.metrics_names[1], scores[1] * 100))
+    print("loss : ", scores[0], "/ acc : ", scores[1])
+
+
     model1.summary()
-    print((scores,100))
+
+    #----------------------#
+    # Print test prediction
+    print("-- Predict --")
+    # Recommended labels top3
+    batchsize = 64
+    image_size = (255, 255)
+    pred_gen = ImageDataGenerator().flow_from_directory(
+        '/home/mll/Capstone/predict_image/',
+        class_mode='categorical',
+        batch_size=batchsize,
+        target_size=image_size
+    )
+    predictions = model1.predict_generator(pred_gen)
 
 
-    #recommended labels top3
+    np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
+    print(test_gen.class_indices)
+    print(predictions)
+    import operator
+    index, value = max(enumerate(predictions[0]), key=operator.itemgetter(1))
+    print(index, "/",value)
 
 
-
+    print(test_gen.class_indices)
+    pred_result = [name for name, target in test_gen.class_indices.items() if target == index]
+    print(pred_result)
+    print("-- Top list --")
 
 if __name__ == "__main__":
     main()

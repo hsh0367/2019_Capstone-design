@@ -169,7 +169,16 @@
 
           function focus_img(recommend_img){
             //추천 이미지 클릭시 선택한 이미지 id 저장
-            img_id = recommend_img
+
+            if(recommend_img != img_id){
+              var focus_img = document.getElementById(img_id);
+              focus_img.style.opacity = 1;
+            }
+            var focus_img = document.getElementById(recommend_img);
+            focus_img.style.opacity = 0.5;
+            img_id = recommend_img;
+
+
           }
 
           function sendImg() {
@@ -177,12 +186,7 @@
           // var image_canvas = document.getElementById('cnvs')
           // var image =  cnvs.toDataURL()
           var image = document.getElementById(img_id)
-
-
           var x =  document.createElement("IMG");
-
-
-
           x.setAttribute("src", image.src);
           x.setAttribute("width", "100");
           x.setAttribute("height", "100");

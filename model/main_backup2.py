@@ -5,14 +5,12 @@ import os
 from keras.models import Sequential
 from keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten
 from keras.preprocessing.image import ImageDataGenerator
+from PIL import Image
 
 '''
     - Keras base image classification 
-    - Latest Backup update : 10.30
-    - Last model : 1030_5layer_200step_100epoch.h5
+    - Latest update : 10.31
     - Last acc : 80.12%
-    
-
     - version : 1.52
 
 '''
@@ -66,15 +64,6 @@ def createModel(numclass):
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
 
-    model.add(Conv2D(8, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(8, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-
-    model.add(Conv2D(8, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(8, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-
     model.add(Flatten())
     model.add(Dense(128, activation='relu'))
     model.add(Dense(numclass, activation='softmax'))  # label count = dense label.
@@ -117,16 +106,10 @@ def main():
         model1 = createModel(numclass)
         model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-        '''
-        from IPython.display import SVG
-        from keras.utils.vis_utils import model_to_dot
-        import matplotlib
-        SVG(model_to_dot(model1, show_shapes=True).create(prog='dot', format='svg'))
-        '''
-
         print("Training....")
-        history = model1.fit_generator(train_gen, steps_per_epoch=200, epochs=100, validation_data=valid_gen,
+        history = model1.fit_generator(train_gen, steps_per_epoch=2000, epochs=100, validation_data=valid_gen,
                                        validation_steps=100)
+        # origin : step 200 epoch 100
 
         # Saving model
         # Save sturcture to json file, weight to h5 file.
@@ -157,20 +140,37 @@ def main():
         model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])  # model compile
 
 
-
     else:
         print("wrong input")
         exit()
 
     print("Test....")
-    scores = model1.evaluate_generator(test_gen, steps=50)
+    scores = model1.evaluate_generator(test_gen, steps=10)
+    print("%s: %.2f%%" % (model1.metrics_names[1], scores[1] * 100))
+    print("loss : ", scores[0], "/ acc : ", scores[1])
+
     model1.summary()
-    print((scores, 100))
 
-    test_image = Image.open('/home/mll/Capstone/predict_image' + "/" + imagefile)
-    predictions = model1.predict(test_image)
+    # ----------------------#
+    # Recommended labels top3
 
-    # recommended labels top3
+    # Print test prediction
+    print("-- Predict --")
+    batchsize = 64
+    image_size = (255, 255)
+    pred_gen = ImageDataGenerator().flow_from_directory(
+        '/home/mll/Capstone/predict_image/',
+        class_mode='categorical',
+        batch_size=batchsize,
+        target_size=image_size
+    )
+    predictions = model1.predict_generator(pred_gen)
+    np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
+    import operator
+    index, value = max(enumerate(predictions[0]), key=operator.itemgetter(1))
+    pred_result = [name for name, target in test_gen.class_indices.items() if target == index]
+    print("label : " + index, "| acc : ", value)
+    print("-- pred is : " + pred_result)
 
 
 if __name__ == "__main__":

@@ -1,21 +1,21 @@
-import keras
 import matplotlib
 import numpy as np
 import os
 from keras.models import Sequential
 from keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten
 from keras.preprocessing.image import ImageDataGenerator
+import tensorflow as tf
 from PIL import Image
 '''
     - Keras base image classification 
-    - Latest update : 10.30
-    - Last model : 1030_5layer_200step_100epoch.h5
+    - Latest update : 10.31
+    - Last model : 1031_5layer_1000step_200epoch.h5
     - Last acc : 80.12%
     
-    - version : 1.52
+    - version : 1.53 , layer to 3 
+    - Update cuda 10.0 , cudnn 7.6.4
     
 '''
-
 
 def image_set():
     print("Get images....")
@@ -60,19 +60,16 @@ def createModel(numclass):
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
 
+    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(64, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.25))
+
     model.add(Conv2D(16, (3, 3), padding='same', activation='relu'))
     model.add(Conv2D(16, (3, 3), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
 
-    model.add(Conv2D(8, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(8, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-
-    model.add(Conv2D(8, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(8, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
 
     model.add(Flatten())
     model.add(Dense(128, activation='relu'))
@@ -99,25 +96,11 @@ def plt_show_acc(history):
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Test'], loc=0)
 
-
-def get_output():
-    batchsize = 64
-    image_size = (255, 255)
-    pred_gen = ImageDataGenerator().flow_from_directory(
-        '/home/mll/Capstone/predict_image/',
-        class_mode='categorical',
-        batch_size=batchsize,
-        target_size=image_size
-    )
-    predictions = model1.predict_generator(pred_gen)
-
-    np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
-    print(test_gen.class_indices)
-    print(predictions)
-
-
 def main():
     print("Start....")
+
+
+
 
     train_gen, test_gen, valid_gen = image_set()
     numclass = train_gen.num_classes
@@ -130,15 +113,9 @@ def main():
         model1 = createModel(numclass)
         model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-        '''
-        from IPython.display import SVG
-        from keras.utils.vis_utils import model_to_dot
-        import matplotlib
-        SVG(model_to_dot(model1, show_shapes=True).create(prog='dot', format='svg'))
-        '''
-
         print("Training....")
-        history = model1.fit_generator(train_gen, steps_per_epoch=200, epochs=100, validation_data=valid_gen, validation_steps=100)
+        history = model1.fit_generator(train_gen, steps_per_epoch=500, epochs=100, validation_data=valid_gen, validation_steps=100)
+        # origin : step 200 epoch 100
 
         #Saving model
         #Save sturcture to json file, weight to h5 file.
@@ -180,13 +157,13 @@ def main():
     print("%s: %.2f%%" % (model1.metrics_names[1], scores[1] * 100))
     print("loss : ", scores[0], "/ acc : ", scores[1])
 
-
     model1.summary()
 
     #----------------------#
+    # Recommended labels top3
+
     # Print test prediction
     print("-- Predict --")
-    # Recommended labels top3
     batchsize = 64
     image_size = (255, 255)
     pred_gen = ImageDataGenerator().flow_from_directory(
@@ -196,20 +173,15 @@ def main():
         target_size=image_size
     )
     predictions = model1.predict_generator(pred_gen)
-
-
     np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
-    print(test_gen.class_indices)
-    print(predictions)
     import operator
     index, value = max(enumerate(predictions[0]), key=operator.itemgetter(1))
-    print(index, "/",value)
-
-
-    print(test_gen.class_indices)
     pred_result = [name for name, target in test_gen.class_indices.items() if target == index]
-    print(pred_result)
-    print("-- Top list --")
+    print("label : "+index, "| acc : ", value)
+    print("-- pred is : "+pred_result)
+
+    #keras - tensorflowjs model convert save.
+    #tfjs.converters.save_keras_model(model1,'./save_model')
 
 if __name__ == "__main__":
     main()

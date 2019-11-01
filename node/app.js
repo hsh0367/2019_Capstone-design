@@ -105,7 +105,7 @@ io.sockets.on('connection', function(socket) {
 
     console.log(data)
 
-    var options = make_option(data)
+    var options = make_option(data.buffer)
 
     PythonShell.run('./test.py', options, function (err, results) {
       if (err) throw err;

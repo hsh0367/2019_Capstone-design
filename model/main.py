@@ -78,7 +78,7 @@ def createModel(numclass):
 
     return model
 
-def recommand(predictions, test_gen):
+def recommand(predictions, class_dict):
     # Recommend top 3
     predictions = predictions[0].tolist()
     predict = []
@@ -87,9 +87,9 @@ def recommand(predictions, test_gen):
 
     predict2 = sorted(predict, key=lambda x: x[1], reverse=True)
 
-    recommend1 = [name for name, target in test_gen.class_indices.items() if target == predict2[0][0]]
-    recommend2 = [name for name, target in test_gen.class_indices.items() if target == predict2[1][0]]
-    recommend3 = [name for name, target in test_gen.class_indices.items() if target == predict2[2][0]]
+    recommend1 = [name for name, target in class_dict.items() if target == predict2[0][0]]
+    recommend2 = [name for name, target in class_dict.items() if target == predict2[1][0]]
+    recommend3 = [name for name, target in class_dict.items() if target == predict2[2][0]]
     print(recommend1, "/", recommend2, "/", recommend3)
 
 
@@ -113,14 +113,25 @@ def plt_show_acc(history, name):
     plt.savefig('./Result_graph'+name+'acc.png')
 
 
+def save_label_dict(class_label):
+    f = open("./save_model/label_dict.txt", "w")
+    f.write(str(class_label))
+    f.close()
+
 
 
 def main():
-    print("Start image generate....")
     # image generate
+    print("Start image generate....")
     train_gen, test_gen, valid_gen = image_set()
     numclass = train_gen.num_classes
-    print(train_gen.num_classes)
+    class_dict = train_gen.class_indices
+    print("label count : ", numclass)
+
+    # save label_dict
+    save_label_dict(class_dict)
+
+
     print("(1) Train model | (2) Load saved model |")
     number = input()
 
@@ -191,12 +202,12 @@ def main():
     np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
     import operator
     index, value = max(enumerate(predictions[0]), key=operator.itemgetter(1))
-    pred_result = [name for name, target in test_gen.class_indices.items() if target == index]
+    pred_result = [name for name, target in class_dict.items() if target == index]
     print("-- pred label : ", index, "| acc : ", value)
     print("-- pred is : ", pred_result)
 
     #recommand_top3
-    recommand(predictions, test_gen)
+    recommand(predictions, class_dict)
 
     print(" END! ")
 

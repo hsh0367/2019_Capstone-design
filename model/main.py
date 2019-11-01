@@ -8,9 +8,9 @@ import tensorflow as tf
 from PIL import Image
 '''
     - Keras base image classification 
-    - Latest update : 10.31
-    - Last model : 1031_5layer_1000step_200epoch.h5
-    - Last acc : 80.12%
+    - Latest update : 11.01
+    - Last model : v1.53
+    - Last acc : 80.54%
     
     - version : 1.53 , layer to 3 
     - Update cuda 10.0 , cudnn 7.6.4
@@ -97,24 +97,23 @@ def plt_show_acc(history):
     plt.legend(['Train', 'Test'], loc=0)
 
 def main():
-    print("Start....")
-
-
-
-
+    print("Start image generate....")
+    # image generate
     train_gen, test_gen, valid_gen = image_set()
     numclass = train_gen.num_classes
     print(train_gen.num_classes)
-    print("(1) Train model | (2) Load saved model")
+    print("(1) Train model | (2) Load saved model |")
     number = input()
 
     if(number=="1"):
+
+
         print("Model build....")
         model1 = createModel(numclass)
         model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         print("Training....")
-        history = model1.fit_generator(train_gen, steps_per_epoch=500, epochs=100, validation_data=valid_gen, validation_steps=100)
+        history = model1.fit_generator(train_gen, steps_per_epoch=800, epochs=80, validation_data=valid_gen, validation_steps=100)
         # origin : step 200 epoch 100
 
         #Saving model
@@ -130,6 +129,10 @@ def main():
         plt_show_acc(history)
         plt.show()
 
+        print("Test....")
+        scores = model1.evaluate_generator(test_gen, steps=10)
+        print("%s: %.2f%%" % (model1.metrics_names[1], scores[1] * 100))
+        print("loss : ", scores[0], "/ acc : ", scores[1])
 
     elif(number=="2"):
         from keras.models import load_model
@@ -152,11 +155,6 @@ def main():
         exit()
 
 
-    print("Test....")
-    scores = model1.evaluate_generator(test_gen, steps=10)
-    print("%s: %.2f%%" % (model1.metrics_names[1], scores[1] * 100))
-    print("loss : ", scores[0], "/ acc : ", scores[1])
-
     model1.summary()
 
     #----------------------#
@@ -176,10 +174,19 @@ def main():
     np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
     import operator
     index, value = max(enumerate(predictions[0]), key=operator.itemgetter(1))
+   #index2, value2 = (enumerate(predictions[0]))
     pred_result = [name for name, target in test_gen.class_indices.items() if target == index]
-    print("label : "+index, "| acc : ", value)
-    print("-- pred is : "+pred_result)
+    print("label : ", index, "| acc : ", value)
+    print("-- pred is : ", pred_result)
+    predict = []
+    print(predictions[0])
+    predictions = predictions[0].tolist()
+    for i in range(len(predictions)):
+        print(predictions[i])
+        predict[i] = [i, predictions[i]]
+    print(predict)
 
+    print(" END! ")
     #keras - tensorflowjs model convert save.
     #tfjs.converters.save_keras_model(model1,'./save_model')
 

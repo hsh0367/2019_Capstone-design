@@ -1,4 +1,5 @@
-import matplotlib
+
+import matplotlib.pyplot as plt
 import numpy as np
 import os
 from keras.models import Sequential
@@ -12,8 +13,8 @@ from PIL import Image
     - Last model : v1.53
     - Last acc : 80.54%
     
-    - version : 1.53 , layer to 3 
-    - Update cuda 10.0 , cudnn 7.6.4
+    - Add recommend top 3 
+    - 
     
 '''
 
@@ -77,24 +78,42 @@ def createModel(numclass):
 
     return model
 
-import matplotlib.pyplot as plt
+def recommand(predictions, test_gen):
+    # Recommend top 3
+    predictions = predictions[0].tolist()
+    predict = []
+    for i in range(len(predictions)):
+        predict.insert(i, [i, predictions[i]])
 
-def plt_show_loss(history):
+    predict2 = sorted(predict, key=lambda x: x[1], reverse=True)
+
+    recommend1 = [name for name, target in test_gen.class_indices.items() if target == predict2[0][0]]
+    recommend2 = [name for name, target in test_gen.class_indices.items() if target == predict2[1][0]]
+    recommend3 = [name for name, target in test_gen.class_indices.items() if target == predict2[2][0]]
+    print(recommend1, "/", recommend2, "/", recommend3)
+
+
+
+def plt_show_loss(history, name):
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
     plt.title('Model Loss')
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Test'], loc=0)
+    plt.savefig('./Result_graph'+name+'_loss.png')
 
-
-def plt_show_acc(history):
+def plt_show_acc(history, name):
     plt.plot(history.history['acc'])
     plt.plot(history.history['val_acc'])
     plt.title('Model accuracy')
     plt.ylabel('Accuracy')
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Test'], loc=0)
+    plt.savefig('./Result_graph'+name+'acc.png')
+
+
+
 
 def main():
     print("Start image generate....")
@@ -123,10 +142,9 @@ def main():
         name = input()
         model1.save('save_model/{}.h5'.format(name))
 
-        plt_show_loss(history)
+        plt_show_loss(history , name)
         plt.show()
-
-        plt_show_acc(history)
+        plt_show_acc(history , name)
         plt.show()
 
         print("Test....")
@@ -154,7 +172,6 @@ def main():
         print("wrong input")
         exit()
 
-
     model1.summary()
 
     #----------------------#
@@ -174,21 +191,14 @@ def main():
     np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
     import operator
     index, value = max(enumerate(predictions[0]), key=operator.itemgetter(1))
-   #index2, value2 = (enumerate(predictions[0]))
     pred_result = [name for name, target in test_gen.class_indices.items() if target == index]
-    print("label : ", index, "| acc : ", value)
+    print("-- pred label : ", index, "| acc : ", value)
     print("-- pred is : ", pred_result)
-    predict = []
-    print(predictions[0])
-    predictions = predictions[0].tolist()
-    for i in range(len(predictions)):
-        print(predictions[i])
-        predict[i] = [i, predictions[i]]
-    print(predict)
+
+    #recommand_top3
+    recommand(predictions, test_gen)
 
     print(" END! ")
-    #keras - tensorflowjs model convert save.
-    #tfjs.converters.save_keras_model(model1,'./save_model')
 
 if __name__ == "__main__":
     main()

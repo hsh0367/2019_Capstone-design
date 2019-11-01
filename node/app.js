@@ -18,6 +18,25 @@ const server = http.createServer(app)
 
 /* 생성된 서버를 socket.io에 바인딩 */
 const io = socket(server)
+var {PythonShell} = require('python-shell');
+
+
+function make_option(data){
+  var option = {
+    mode: 'text',
+
+    pythonPath: '',
+
+    pythonOptions: ['-u'],
+
+    scriptPath: '',
+
+    args: [data]
+  }
+  return option;
+}
+
+
 
 app.use('/css', express.static('./asset/css'))
 app.use('/js', express.static('./asset/js'))
@@ -64,9 +83,7 @@ io.sockets.on('connection', function(socket) {
   socket.on('message', function(data) {
     /* 받은 데이터에 누가 보냈는지 이름을 추가 */
     data.name = socket.name
-
     console.log(data)
-
     /* 보낸 사람을 제외한 나머지 유저에게 메시지 전송 */
     socket.broadcast.emit('update', data);
   })
@@ -81,6 +98,29 @@ io.sockets.on('connection', function(socket) {
 
     /* 보낸 사람을 제외한 나머지 유저에게 메시지 전송 */
     socket.broadcast.emit('update', data);
+  })
+  socket.on('recommend', function(data) {
+    /* 받은 데이터에 누가 보냈는지 이름을 추가 */
+    data.name = socket.name
+
+    console.log(data)
+
+    var options = make_option(data)
+
+    PythonShell.run('./test.py', options, function (err, results) {
+      if (err) throw err;
+      console.log('results: %j', results);
+      console.log(results)
+      //results is  recommend img_list
+
+
+
+      var img_list = Object.values(results)
+      socket.emit('update_re', img_list[0]);
+    });
+    //data list
+    // var img_list = "./css/camera.png,./css/photoPlus.png,./css/conversationLogo.png"
+    // socket.emit('update_re', img_list);
   })
   /* 접속 종료 */
   socket.on('disconnect', function() {

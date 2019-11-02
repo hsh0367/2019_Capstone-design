@@ -8,13 +8,17 @@ import tensorflow as tf
 from PIL import Image
 
 '''
-    - Keras base image classification 
-    - Latest update : 11.01
-    - Last model : v1.53
-    - Last acc : 80.54%
-
-    - back up at 11.01 15:00
-    - 
+    ---------- Model Configuration ----------
+    |- Keras base image classification      |
+    |- Latest update : 11.01                |
+    |- LTS model : v1.53                    |
+    |- LST model acc : 80.54%               |
+    |- Latest model : v1.54                 |
+    -----------------------------------------
+    |- Backup at 11.01                      |
+    |- Performance goal : Accuracy 85% over |
+    |                                       | 
+    -----------------------------------------
 
 '''
 
@@ -141,7 +145,7 @@ def main():
         model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         print("Training....")
-        history = model1.fit_generator(train_gen, steps_per_epoch=800, epochs=80, validation_data=valid_gen,
+        history = model1.fit_generator(train_gen, steps_per_epoch=600, epochs=80, validation_data=valid_gen,
                                        validation_steps=100)
         # origin : step 200 epoch 100
 
@@ -188,6 +192,11 @@ def main():
 
     # Print test prediction
     print("-- Predict --")
+
+    f2 = open('./save_model/label_dict.txt')
+    label_dict = eval(f2.read())
+    f2.close()
+
     batchsize = 64
     image_size = (255, 255)
     pred_gen = ImageDataGenerator().flow_from_directory(
@@ -200,12 +209,12 @@ def main():
     np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
     import operator
     index, value = max(enumerate(predictions[0]), key=operator.itemgetter(1))
-    pred_result = [name for name, target in class_dict.items() if target == index]
+    pred_result = [name for name, target in label_dict.items() if target == index]
     print("-- pred label : ", index, "| acc : ", value)
     print("-- pred is : ", pred_result)
 
     # recommand_top3
-    recommand(predictions, class_dict)
+    recommand(predictions, label_dict)
 
     print(" END! ")
 

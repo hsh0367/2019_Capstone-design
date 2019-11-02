@@ -11,12 +11,14 @@ from PIL import Image
     ---------- Model Configuration ----------
     |- Keras base image classification      |
     |- Latest update : 11.01                |
-    |- Last model : v1.53                   |
-    |- Last acc : 80.54%                    |
+    |- LTS model : v1.53                    |
+    |- LST model acc : 80.54%               |
+    |-                                      |
     -----------------------------------------
-    |- Add recommend top 3 
-    |- 
-    |
+    |- Fix layer 5->4m, stride 8 ->64       |
+    |- Performance goal : Accuracy 85% over |
+    |- now model : v1.55                    | 
+    -----------------------------------------
     
 '''
 
@@ -53,7 +55,17 @@ def image_set():
 
 def createModel(numclass):
     model = Sequential()
-    model.add(Conv2D(32, (3, 3), padding='same', activation='sigmoid', input_shape=(255, 255, 3)))
+    model.add(Conv2D(64, (5, 5), padding='same', activation='relu', input_shape=(255, 255, 3)))
+    model.add(Conv2D(64, (5, 5), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(3, 3)))
+    model.add(Dropout(0.25))
+
+    model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(32, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.25))
+
+    model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
     model.add(Conv2D(32, (3, 3), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
@@ -63,18 +75,8 @@ def createModel(numclass):
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
 
-    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(64, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-
     model.add(Conv2D(16, (3, 3), padding='same', activation='relu'))
     model.add(Conv2D(16, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-
-    model.add(Conv2D(8, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(8, (3, 3), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
 
@@ -86,7 +88,7 @@ def createModel(numclass):
     return model
 
 def recommand(predictions, class_dict):
-    # Recommend top 3
+    # Recommend top 3 -> 10
     predictions = predictions[0].tolist()
     predict = []
     for i in range(len(predictions)):
@@ -94,10 +96,14 @@ def recommand(predictions, class_dict):
 
     predict2 = sorted(predict, key=lambda x: x[1], reverse=True)
 
-    recommend1 = [name for name, target in class_dict.items() if target == predict2[0][0]]
-    recommend2 = [name for name, target in class_dict.items() if target == predict2[1][0]]
-    recommend3 = [name for name, target in class_dict.items() if target == predict2[2][0]]
-    print(recommend1, "/", recommend2, "/", recommend3)
+    #recommend1 = [name for name, target in class_dict.items() if target == predict2[0][0]]
+    #recommend2 = [name for name, target in class_dict.items() if target == predict2[1][0]]
+    #recommend3 = [name for name, target in class_dict.items() if target == predict2[2][0]]
+    # print(recommend1, "/", recommend2, "/", recommend3)
+    for i in 10:
+        recommand = [name for name, target in class_dict.items() if target == predict2[i][0]]
+        print(recommand)
+
 
 
 
@@ -108,7 +114,7 @@ def plt_show_loss(history, name):
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Test'], loc=0)
-    plt.savefig('./Result_graph'+name+'_loss.png')
+    plt.savefig('./Result_graph/'+name+'_loss.png')
 
 def plt_show_acc(history, name):
     plt.plot(history.history['acc'])
@@ -117,7 +123,7 @@ def plt_show_acc(history, name):
     plt.ylabel('Accuracy')
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Test'], loc=0)
-    plt.savefig('./Result_graph'+name+'acc.png')
+    plt.savefig('./Result_graph/'+name+'acc.png')
 
 
 def save_label_dict(class_label):
@@ -150,7 +156,7 @@ def main():
         model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         print("Training....")
-        history = model1.fit_generator(train_gen, steps_per_epoch=600, epochs=80, validation_data=valid_gen, validation_steps=100)
+        history = model1.fit_generator(train_gen, steps_per_epoch=800, epochs=100, validation_data=valid_gen, validation_steps=100)
         # origin : step 200 epoch 100
 
         #Saving model
@@ -166,7 +172,7 @@ def main():
         plt.show()
 
         print("Test....")
-        scores = model1.evaluate_generator(test_gen, steps=10)
+        scores = model1.evaluate_generator(test_gen, steps=100)
         print("%s: %.2f%%" % (model1.metrics_names[1], scores[1] * 100))
         print("loss : ", scores[0], "/ acc : ", scores[1])
 
@@ -191,6 +197,11 @@ def main():
         exit()
 
     model1.summary()
+
+
+    #import tensorflow as tfjs
+   # tfjs.converters.save_keras_model(model1, './save_model')
+
 
     #----------------------#
     # Recommended labels top3

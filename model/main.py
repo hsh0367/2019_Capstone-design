@@ -211,15 +211,13 @@ def main():
     f2.close()
 
     # pred  -> not imagedatagenerator.
-    batchsize = 64
-    image_size = (255, 255)
-    pred_gen = ImageDataGenerator().flow_from_directory(
-        '/home/mll/Capstone/predict_image/',
-        class_mode='categorical',
-        batch_size=batchsize,
-        target_size=image_size
-    )
-    predictions = model1.predict_generator(pred_gen)
+
+    img = Image.open('/home/mll/Capstone/predict_image/pred/qqq.png')
+    img = img.resize((255, 255))
+    img = img.convert("RGB")
+    pred_gen = np.expand_dims(img, axis=0)
+    predictions = model1.predict(pred_gen)
+
     np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
     import operator
     index, value = max(enumerate(predictions[0]), key=operator.itemgetter(1))

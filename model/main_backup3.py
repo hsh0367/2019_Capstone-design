@@ -8,7 +8,6 @@ import tensorflow as tf
 from PIL import Image
 
 '''
-    backup 11.02
     ---------- Model Configuration ----------
     |- Keras base image classification      |
     |- Latest update : 11.01                |
@@ -211,14 +210,11 @@ def main():
     f2.close()
 
     # pred  -> not imagedatagenerator.
-    batchsize = 64
-    image_size = (255, 255)
-    pred_gen = ImageDataGenerator().flow_from_directory(
-        '/home/mll/Capstone/predict_image/',
-        class_mode='categorical',
-        batch_size=batchsize,
-        target_size=image_size
-    )
+
+    img = Image.open('/home/mll/Capstone/predict_image/pred/qqq.png')
+    img = img.resize((255, 255))
+    img = img.convert("RGB")
+    pred_gen = np.array(img)
     predictions = model1.predict_generator(pred_gen)
     np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
     import operator

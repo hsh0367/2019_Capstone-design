@@ -8,7 +8,7 @@ import tensorflow as tf
 from PIL import Image
 
 '''
-    Back up : 11.01
+    backup 11.02
     ---------- Model Configuration ----------
     |- Keras base image classification      |
     |- Latest update : 11.01                |
@@ -90,7 +90,7 @@ def createModel(numclass):
 
 
 def recommand(predictions, class_dict):
-    # Recommend top 3
+    # Recommend top 3 -> 10
     predictions = predictions[0].tolist()
     predict = []
     for i in range(len(predictions)):
@@ -98,10 +98,14 @@ def recommand(predictions, class_dict):
 
     predict2 = sorted(predict, key=lambda x: x[1], reverse=True)
 
-    recommend1 = [name for name, target in class_dict.items() if target == predict2[0][0]]
-    recommend2 = [name for name, target in class_dict.items() if target == predict2[1][0]]
-    recommend3 = [name for name, target in class_dict.items() if target == predict2[2][0]]
-    print(recommend1, "/", recommend2, "/", recommend3)
+    # recommend1 = [name for name, target in class_dict.items() if target == predict2[0][0]]
+    # recommend2 = [name for name, target in class_dict.items() if target == predict2[1][0]]
+    # recommend3 = [name for name, target in class_dict.items() if target == predict2[2][0]]
+    # print(recommend1, "/", recommend2, "/", recommend3)
+    for i in range(10):
+        recommand = [name for name, target in class_dict.items() if target == predict2[i][0]]
+        recommand_percent = predict2[i][1]
+        print(recommand, " ", round(recommand_percent, 3) * 100, "%")
 
 
 def plt_show_loss(history, name):
@@ -111,7 +115,7 @@ def plt_show_loss(history, name):
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Test'], loc=0)
-    plt.savefig('./Result_graph' + name + '_loss.png')
+    plt.savefig('./Result_graph/' + name + '_loss.png')
 
 
 def plt_show_acc(history, name):
@@ -121,7 +125,7 @@ def plt_show_acc(history, name):
     plt.ylabel('Accuracy')
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Test'], loc=0)
-    plt.savefig('./Result_graph' + name + 'acc.png')
+    plt.savefig('./Result_graph/' + name + 'acc.png')
 
 
 def save_label_dict(class_label):
@@ -206,6 +210,7 @@ def main():
     label_dict = eval(f2.read())
     f2.close()
 
+    # pred  -> not imagedatagenerator.
     batchsize = 64
     image_size = (255, 255)
     pred_gen = ImageDataGenerator().flow_from_directory(
@@ -219,8 +224,8 @@ def main():
     import operator
     index, value = max(enumerate(predictions[0]), key=operator.itemgetter(1))
     pred_result = [name for name, target in label_dict.items() if target == index]
-    print("-- pred label : ", index, "| acc : ", value)
-    print("-- pred is : ", pred_result)
+    # print("-- pred label : ", index, "| acc : ", value)
+    # print("-- pred is : \n", pred_result)
 
     # recommand_top3
     recommand(predictions, label_dict)

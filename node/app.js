@@ -26,7 +26,7 @@ function make_option(data){
     mode: 'text',
     pythonPath: '',
     pythonOptions: ['-u'],
-    scriptPath: '',
+    scriptPath: './image_predict',
     args: [data]
   }
   return option;
@@ -103,8 +103,8 @@ io.sockets.on('connection', function(socket) {
     console.log(data)
 
     var options = make_option(data.buffer)
-    
-    PythonShell.run('./image_predict/image_predict.py', options, function (err, results) {
+
+    PythonShell.run('image_predict.py', options, function (err, results) {
       if (err) throw err;
       console.log('results: %j', results);
       console.log(results)
@@ -130,5 +130,3 @@ io.sockets.on('connection', function(socket) {
 server.listen(8080, function() {
   console.log('서버 실행 중..')
 })
-
-

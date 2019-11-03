@@ -233,13 +233,22 @@
           }
           function chage_recommend(img_list){
             console.log("chage_recommend")
+
+
             var recommend_list = img_list.split(',')
             var re_1 = document.getElementById('recommend_1')
             var re_2 = document.getElementById('recommend_2')
             var re_3 = document.getElementById('recommend_3')
-            re_1.src = recommend_list[0]
-            re_2.src = recommend_list[1]
-            re_3.src = recommend_list[2]
+
+            console.log("./data/"+recommend_list[0]+".png")
+            console.log("./data/"+recommend_list[1]+".png")
+            console.log("./data/"+recommend_list[2]+".png")
+
+            re_1.src = "./data/"+recommend_list[0]+".png"
+            re_2.src = "./data/"+recommend_list[1]+".png"
+            re_3.src = "./data/"+recommend_list[2]+".png"
+
+
           }
         // 그림판 코드
         $(document).ready(function(){

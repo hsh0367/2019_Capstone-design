@@ -29,7 +29,7 @@ function make_option(data){
 
     pythonOptions: ['-u'],
 
-    scriptPath: '',
+    scriptPath: './image_predict',
 
     args: [data]
   }
@@ -40,6 +40,7 @@ function make_option(data){
 
 app.use('/css', express.static('./asset/css'))
 app.use('/js', express.static('./asset/js'))
+app.use('/data', express.static('./asset/data'))
 
 /* Get 방식으로 / 경로에 접속하면 실행 됨 */
 app.get('/', function(request, response) {
@@ -107,20 +108,13 @@ io.sockets.on('connection', function(socket) {
 
     var options = make_option(data.buffer)
 
-    PythonShell.run('./test.py', options, function (err, results) {
+    PythonShell.run('image_predict.py', options, function (err, results) {
       if (err) throw err;
       console.log('results: %j', results);
-      console.log(results)
-      //results is  recommend img_list
-
-
-
       var img_list = Object.values(results)
-      socket.emit('update_re', img_list[0]);
+      socket.emit('update_re', img_list[1]);
     });
-    //data list
-    // var img_list = "./css/camera.png,./css/photoPlus.png,./css/conversationLogo.png"
-    // socket.emit('update_re', img_list);
+
   })
   /* 접속 종료 */
   socket.on('disconnect', function() {

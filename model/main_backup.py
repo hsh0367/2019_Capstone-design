@@ -66,11 +66,6 @@ def createModel(numclass):
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
 
-    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(64, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-
     model.add(Conv2D(16, (3, 3), padding='same', activation='relu'))
     model.add(Conv2D(16, (3, 3), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
@@ -145,7 +140,7 @@ def main():
         model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         print("Training....")
-        history = model1.fit_generator(train_gen, steps_per_epoch=600, epochs=80, validation_data=valid_gen,
+        history = model1.fit_generator(train_gen, steps_per_epoch=200, epochs=50, validation_data=valid_gen,
                                        validation_steps=100)
         # origin : step 200 epoch 100
 

@@ -8,16 +8,17 @@ import tensorflow as tf
 from PIL import Image
 
 '''
+    backup_11.04
     ---------- Model Configuration ----------
     |- Keras base image classification      |
     |- Latest update : 11.01                |
     |- LTS model : v1.53                    |
-    |- LST model acc : 80.54%               |
+    |- LTS model acc : 80.54%               |
     |-                                      |
     -----------------------------------------
-    |- Fix layer 5->4m, stride 8 ->64       |
+    |- Fix layer more deeper                |
     |- Performance goal : Accuracy 85% over |
-    |- now model : v1.55                    | 
+    |- now model : v1.56                    | 
     -----------------------------------------
 
 '''
@@ -82,6 +83,7 @@ def createModel(numclass):
     model.add(Dropout(0.25))
 
     model.add(Flatten())
+    # model.add(Dense(256, activation='relu'))
     model.add(Dense(128, activation='relu'))
     model.add(Dense(numclass, activation='softmax'))  # label count = dense label.
 
@@ -154,7 +156,7 @@ def main():
         model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         print("Training....")
-        history = model1.fit_generator(train_gen, steps_per_epoch=800, epochs=100, validation_data=valid_gen,
+        history = model1.fit_generator(train_gen, steps_per_epoch=1000, epochs=200, validation_data=valid_gen,
                                        validation_steps=100)
         # origin : step 200 epoch 100
 
@@ -212,7 +214,7 @@ def main():
     # pred  -> not imagedatagenerator.
 
     img = Image.open('/home/mll/Capstone/predict_image/pred/qqq.png')
-    img = img.resize((255,255))
+    img = img.resize((255, 255))
     img = img.convert("RGB")
     pred_gen = np.expand_dims(img, axis=0)
     predictions = model1.predict(pred_gen)

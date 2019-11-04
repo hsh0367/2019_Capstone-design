@@ -5,20 +5,20 @@ from keras.models import Sequential
 from keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten
 from keras.preprocessing.image import ImageDataGenerator
 import tensorflow as tf
-from PIL import Image
+from PIL import Image, ImageOps
 
 '''
-    backup 11.02
+    
     ---------- Model Configuration ----------
     |- Keras base image classification      |
-    |- Latest update : 11.01                |
+    |- Latest update : 11.04                |
     |- LTS model : v1.53                    |
-    |- LST model acc : 80.54%               |
-    |-                                      |
+    |- LTS model acc : 80.54%               |
     -----------------------------------------
-    |- Fix layer 5->4m, stride 8 ->64       |
+    |- resize input (48,48,1)               |
     |- Performance goal : Accuracy 85% over |
-    |- now model : v1.55                    | 
+    |- now model : v2.00                    | 
+    |- Update : 11.04                       | 
     -----------------------------------------
 
 '''
@@ -29,7 +29,7 @@ def image_set():
     # image_set()
 
     batchsize = 64
-    image_size = (255, 255)
+    image_size = (48,48)
 
     #
     train_gen = ImageDataGenerator().flow_from_directory(
@@ -57,8 +57,8 @@ def image_set():
 
 def createModel(numclass):
     model = Sequential()
-    model.add(Conv2D(64, (5, 5), padding='same', activation='relu', input_shape=(255, 255, 3)))
-    model.add(Conv2D(64, (5, 5), activation='relu'))
+    model.add(Conv2D(16, (3, 3), padding='same', activation='relu', input_shape=(48, 48, 1)))
+    model.add(Conv2D(16, (3, 3), activation='relu'))
     model.add(MaxPooling2D(pool_size=(3, 3)))
     model.add(Dropout(0.25))
 
@@ -115,7 +115,7 @@ def plt_show_loss(history, name):
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Test'], loc=0)
-    plt.savefig('./Result_graph/' + name + '_loss.png')
+    plt.savefig('./Result_graph/{}_loss.png'.format(name))
 
 
 def plt_show_acc(history, name):
@@ -125,7 +125,7 @@ def plt_show_acc(history, name):
     plt.ylabel('Accuracy')
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Test'], loc=0)
-    plt.savefig('./Result_graph/' + name + 'acc.png')
+    plt.savefig('./Result_graph/{}_acc.png'.format(name))
 
 
 def save_label_dict(class_label):
@@ -155,7 +155,7 @@ def main():
         model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         print("Training....")
-        history = model1.fit_generator(train_gen, steps_per_epoch=800, epochs=100, validation_data=valid_gen,
+        history = model1.fit_generator(train_gen, steps_per_epoch=500, epochs=100, validation_data=valid_gen,
                                        validation_steps=100)
         # origin : step 200 epoch 100
 
@@ -211,10 +211,14 @@ def main():
     f2.close()
 
     # pred  -> not imagedatagenerator.
+    image_size = (48, 48)
 
     img = Image.open('/home/mll/Capstone/predict_image/pred/qqq.png')
-    img = img.resize((255, 255))
-    img = img.convert("RGB")
+    img = img.resize(image_size)
+    img = img.convert('L')  # L
+    inv_image = ImageOps.invert(img)
+    save_image = inv_image.resize((48, 48), Image.ANTIALIAS)
+    save_image = save_image.rotate(180)
     pred_gen = np.expand_dims(img, axis=0)
     predictions = model1.predict(pred_gen)
 

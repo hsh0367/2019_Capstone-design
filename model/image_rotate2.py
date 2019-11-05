@@ -39,7 +39,7 @@ def folder_list(file_path):
             save_image = inv_image.resize((48,48),Image.ANTIALIAS)
             save_image = save_image.rotate(180)
 
-
+            '''
             if(count<6000):
                 save_image.save(target_path + "/train/" + data_folder + "/" + imagefile, quality=100)
             elif (count > 6000 and count <= 6500):
@@ -53,7 +53,7 @@ def folder_list(file_path):
                 save_image.save(target_path + "/test/" + data_folder + "/" + imagefile, quality=100)
             elif (count >= 6500 and count < 6600):
                 save_image.save(target_path + "/valid/" + data_folder + "/" + imagefile, quality=100)
-            '''
+
 
             image.close()
             save_image.close()

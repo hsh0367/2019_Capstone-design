@@ -14,10 +14,13 @@ from PIL import Image, ImageOps
     |- Latest update : 11.04                |
     |- LTS model : v1.53                    |
     |- LTS model acc : 80.54%               |
+    |- Latest model : v2.00                 |
+    |- Latest model acc : 93.91% (overfit)  |
     -----------------------------------------
     |- resize input (48,48,1)               |
     |- Performance goal : Accuracy 85% over |
-    |- now model : v2.00                    | 
+    |- now model : v2.01                    |
+    |- label : 56                          | 
     |- Update : 11.04                       | 
     -----------------------------------------
 
@@ -36,20 +39,23 @@ def image_set():
         '/home/mll/Capstone/fix_image_set/train/',
         class_mode='categorical',
         batch_size=batchsize,
-        target_size=image_size
+        target_size=image_size,
+        color_mode='grayscale'
     )
 
     test_gen = ImageDataGenerator().flow_from_directory(
         '/home/mll/Capstone/fix_image_set/test/',
         class_mode='categorical',
         batch_size=batchsize,
-        target_size=image_size
+        target_size=image_size,
+        color_mode='grayscale'
     )
     valid_gen = ImageDataGenerator().flow_from_directory(
         '/home/mll/Capstone/fix_image_set/valid/',
         class_mode='categorical',
         batch_size=batchsize,
-        target_size=image_size
+        target_size=image_size,
+        color_mode='grayscale'
     )
 
     return train_gen, test_gen, valid_gen
@@ -64,16 +70,6 @@ def createModel(numclass):
 
     model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
     model.add(Conv2D(32, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-
-    model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(32, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-
-    model.add(Conv2D(16, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(16, (3, 3), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
 
@@ -102,6 +98,8 @@ def recommand(predictions, class_dict):
     # recommend2 = [name for name, target in class_dict.items() if target == predict2[1][0]]
     # recommend3 = [name for name, target in class_dict.items() if target == predict2[2][0]]
     # print(recommend1, "/", recommend2, "/", recommend3)
+
+    print('== recommand top 10 ==')
     for i in range(10):
         recommand = [name for name, target in class_dict.items() if target == predict2[i][0]]
         recommand_percent = predict2[i][1]
@@ -155,7 +153,7 @@ def main():
         model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         print("Training....")
-        history = model1.fit_generator(train_gen, steps_per_epoch=500, epochs=100, validation_data=valid_gen,
+        history = model1.fit_generator(train_gen, steps_per_epoch=800, epochs=200, validation_data=valid_gen,
                                        validation_steps=100)
         # origin : step 200 epoch 100
 
@@ -174,7 +172,7 @@ def main():
         print("Test....")
         scores = model1.evaluate_generator(test_gen, steps=100)
         print("%s: %.2f%%" % (model1.metrics_names[1], scores[1] * 100))
-        print("loss : ", scores[0], "/ acc : ", scores[1])
+        print("Test loss : ", scores[0], "/ acc : ", scores[1])
 
     elif (number == "2"):
         from keras.models import load_model
@@ -213,13 +211,14 @@ def main():
     # pred  -> not imagedatagenerator.
     image_size = (48, 48)
 
-    img = Image.open('/home/mll/Capstone/predict_image/pred/qqq.png')
-    img = img.resize(image_size)
+    img = Image.open('/home/mll/Capstone/predict_image/pred/0.png')
+    img = img.rotate(180)
+    img = img.resize(image_size, Image.ANTIALIAS)
     img = img.convert('L')  # L
     inv_image = ImageOps.invert(img)
-    save_image = inv_image.resize((48, 48), Image.ANTIALIAS)
-    save_image = save_image.rotate(180)
-    pred_gen = np.expand_dims(img, axis=0)
+    #pred_gen = inv_image.reshape(48, 48, 1)
+    pred_gen = np.expand_dims(inv_image, axis=0)
+    pred_gen = pred_gen.reshape(-1,48,48,1)
     predictions = model1.predict(pred_gen)
 
     np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})

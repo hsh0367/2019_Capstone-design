@@ -100,7 +100,7 @@
 .skatchStart{
   width: 8%;
   height: 90%;
-  background: url( "picture.png" ) no-repeat;
+  background: url( "photoPlus.png" ) no-repeat;
   background-size: 100% 100%;
   border: 0;
   margin-left: 1.5%;
@@ -250,7 +250,10 @@
   margin-top: 1%;
   margin-right: 2%;
 }
-
+.msg_wrapper {
+  display : block;
+  width : 100%;
+}
 @media (max-width: 880px){
   .backgroundDiv{
     width: auto;

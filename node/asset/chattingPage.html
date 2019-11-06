@@ -157,9 +157,15 @@
               className = 'disconnect'
               break
           }
+
+
           message.classList.add(className)
           message.appendChild(node)
-          chat.appendChild(message)
+          var msg_wrapper = document.createElement('div')
+          msg_wrapper.className ='msg_wrapper'
+          msg_wrapper.appendChild(message)
+          chat.appendChild(msg_wrapper)
+
           // chat.appendChild('\n')
           })
           socket.on('update_re', function(data) {
@@ -195,10 +201,15 @@
           var msg = document.createElement('div')
           msg.classList.add('me')
           msg.appendChild(send_img)
-          chat.appendChild(msg)
           // var br = document.createElement("br");
           // chat.appendChild(br)
           // 서버로 message 이벤트 전달 + 데이터와 함께
+
+          var msg_wrapper = document.createElement('div')
+          msg_wrapper.className ='msg_wrapper'
+          msg_wrapper.appendChild(msg)
+          chat.appendChild(msg_wrapper)
+
           socket.emit('image', { type: 'image',  buffer: send_img.src})
           }
           //enter로 채팅 전송하는 함수
@@ -216,11 +227,14 @@
             // 내가 전송할 메시지 클라이언트에게 표시
             var chat = document.getElementById('chatLog')
             var msg = document.createElement('div')
+            var msg_wrapper = document.createElement('div')
+            msg_wrapper.className ='msg_wrapper'
             var node = document.createTextNode(message)
             // var br = document.createElement("br");
             msg.classList.add('me')
             msg.appendChild(node)
-            chat.appendChild(msg)
+            msg_wrapper.appendChild(msg)
+            chat.appendChild(msg_wrapper)
             // chat.appendChild(br)
             // 서버로 message 이벤트 전달 + 데이터와 함께
             socket.emit('message', {type: 'message', message: message})

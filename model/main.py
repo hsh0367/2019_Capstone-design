@@ -11,17 +11,17 @@ from PIL import Image, ImageOps
     
     ---------- Model Configuration ----------
     |- Keras base image classification      |
-    |- Latest update : 11.04                |
+    |- Latest update : 11.05                |
     |- LTS model : v1.53                    |
     |- LTS model acc : 80.54%               |
-    |- Latest model : v2.00                 |
-    |- Latest model acc : 93.91% (overfit)  |
+    |- Latest model : v2.12                 |
+    |- Latest model acc : 69%               |
     -----------------------------------------
     |- resize input (48,48,1)               |
     |- Performance goal : Accuracy 85% over |
-    |- now model : v2.01                    |
-    |- label : 56                          | 
-    |- Update : 11.04                       | 
+    |- now model : v2.18                    |
+    |- label : 100                          | 
+    |- Update : 11.07                       | 
     -----------------------------------------
 
 '''
@@ -31,7 +31,7 @@ def image_set():
     print("Get images....")
     # image_set()
 
-    batchsize = 64
+    batchsize = 32      #---#
     image_size = (48,48)
 
     #
@@ -65,20 +65,16 @@ def createModel(numclass):
     model = Sequential()
     model.add(Conv2D(16, (3, 3), padding='same', activation='relu', input_shape=(48, 48, 1)))
     model.add(Conv2D(16, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(3, 3)))
-    model.add(Dropout(0.25))
-
-    model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(32, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-
-    model.add(Conv2D(16, (3, 3), padding='same', activation='relu'))
     model.add(Conv2D(16, (3, 3), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
 
     model.add(Flatten())
+    model.add(Dense(700, activation='relu'))
+    model.add(Dropout(0.15))
+    model.add(Dense(512, activation='relu'))
+    model.add(Dropout(0.15))
+    model.add(Dense(256, activation='relu'))
+    model.add(Dropout(0.15))
     model.add(Dense(128, activation='relu'))
     model.add(Dense(numclass, activation='softmax'))  # label count = dense label.
 
@@ -87,6 +83,7 @@ def createModel(numclass):
 
 def recommand(predictions, class_dict):
     # Recommend top 3 -> 10
+
     predictions = predictions[0].tolist()
     predict = []
     for i in range(len(predictions)):
@@ -153,9 +150,9 @@ def main():
         model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         print("Training....")
-        history = model1.fit_generator(train_gen, steps_per_epoch=800, epochs=200, validation_data=valid_gen,
-                                       validation_steps=100)
-        # origin : step 200 epoch 100
+        history = model1.fit_generator(train_gen, steps_per_epoch=1000, epochs=100,
+                                       validation_data=valid_gen, validation_steps=100)
+        # 10000 / 200 next 30000 100 or 5000 / 300
 
         # Saving model
         # Save sturcture to json file, weight to h5 file.
@@ -211,24 +208,27 @@ def main():
     # pred  -> not imagedatagenerator.
     image_size = (48, 48)
 
-    img = Image.open('/home/mll/Capstone/predict_image/pred/0.png')
-    img = img.rotate(180)
+    img = Image.open('/home/mll/Capstone/predict_image/pred/asd.png')
     img = img.resize(image_size, Image.ANTIALIAS)
     img = img.convert('L')  # L
     inv_image = ImageOps.invert(img)
+
+    #show image
+    inv_image.show()
+
     #pred_gen = inv_image.reshape(48, 48, 1)
     pred_gen = np.expand_dims(inv_image, axis=0)
-    pred_gen = pred_gen.reshape(-1,48,48,1)
+    pred_gen = pred_gen.reshape(1,48,48,1)
     predictions = model1.predict(pred_gen)
 
     np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
     import operator
     index, value = max(enumerate(predictions[0]), key=operator.itemgetter(1))
     pred_result = [name for name, target in label_dict.items() if target == index]
-    # print("-- pred label : ", index, "| acc : ", value)
-    # print("-- pred is : \n", pred_result)
+    print("-- pred label : ", index, "| acc : ", value)
+    print("-- pred is : \n", pred_result)
 
-    # recommand_top3
+    # recommand_top 10
     recommand(predictions, label_dict)
 
     print(" END! ")

@@ -5,20 +5,23 @@ from keras.models import Sequential
 from keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten
 from keras.preprocessing.image import ImageDataGenerator
 import tensorflow as tf
-from PIL import Image
+from PIL import Image, ImageOps
 
 '''
-    backup 11.02
+    backup : 1106 model 2.13 
     ---------- Model Configuration ----------
     |- Keras base image classification      |
-    |- Latest update : 11.01                |
+    |- Latest update : 11.04                |
     |- LTS model : v1.53                    |
-    |- LST model acc : 80.54%               |
-    |-                                      |
+    |- LTS model acc : 80.54%               |
+    |- Latest model : v2.12                 |
+    |- Latest model acc : 69%               |
     -----------------------------------------
-    |- Fix layer 5->4m, stride 8 ->64       |
+    |- resize input (48,48,1)               |
     |- Performance goal : Accuracy 85% over |
-    |- now model : v1.55                    | 
+    |- now model : v2.13                    |
+    |- label : 100                          | 
+    |- Update : 11.05                       | 
     -----------------------------------------
 
 '''
@@ -28,28 +31,31 @@ def image_set():
     print("Get images....")
     # image_set()
 
-    batchsize = 64
-    image_size = (255, 255)
+    batchsize = 32  # ---#
+    image_size = (48, 48)
 
     #
     train_gen = ImageDataGenerator().flow_from_directory(
         '/home/mll/Capstone/fix_image_set/train/',
         class_mode='categorical',
         batch_size=batchsize,
-        target_size=image_size
+        target_size=image_size,
+        color_mode='grayscale'
     )
 
     test_gen = ImageDataGenerator().flow_from_directory(
         '/home/mll/Capstone/fix_image_set/test/',
         class_mode='categorical',
         batch_size=batchsize,
-        target_size=image_size
+        target_size=image_size,
+        color_mode='grayscale'
     )
     valid_gen = ImageDataGenerator().flow_from_directory(
         '/home/mll/Capstone/fix_image_set/valid/',
         class_mode='categorical',
         batch_size=batchsize,
-        target_size=image_size
+        target_size=image_size,
+        color_mode='grayscale'
     )
 
     return train_gen, test_gen, valid_gen
@@ -57,32 +63,21 @@ def image_set():
 
 def createModel(numclass):
     model = Sequential()
-    model.add(Conv2D(64, (5, 5), padding='same', activation='relu', input_shape=(255, 255, 3)))
-    model.add(Conv2D(64, (5, 5), activation='relu'))
+    model.add(Conv2D(16, (3, 3), padding='same', activation='relu', input_shape=(48, 48, 1)))
+    model.add(Conv2D(16, (3, 3), activation='relu'))
     model.add(MaxPooling2D(pool_size=(3, 3)))
     model.add(Dropout(0.25))
 
     model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
     model.add(Conv2D(32, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
 
-    model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(32, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-
-    model.add(Conv2D(16, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(16, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-
-    model.add(Conv2D(16, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(16, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
+    model.add(Conv2D(8, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(8, (3, 3), activation='relu'))
+    model.add(Dropout(0.25))  # 0.25 -> 0.1
 
     model.add(Flatten())
+    model.add(Dense(256, activation='relu'))
     model.add(Dense(128, activation='relu'))
     model.add(Dense(numclass, activation='softmax'))  # label count = dense label.
 
@@ -102,6 +97,8 @@ def recommand(predictions, class_dict):
     # recommend2 = [name for name, target in class_dict.items() if target == predict2[1][0]]
     # recommend3 = [name for name, target in class_dict.items() if target == predict2[2][0]]
     # print(recommend1, "/", recommend2, "/", recommend3)
+
+    print('== recommand top 10 ==')
     for i in range(10):
         recommand = [name for name, target in class_dict.items() if target == predict2[i][0]]
         recommand_percent = predict2[i][1]
@@ -115,7 +112,7 @@ def plt_show_loss(history, name):
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Test'], loc=0)
-    plt.savefig('./Result_graph/' + name + '_loss.png')
+    plt.savefig('./Result_graph/{}_loss.png'.format(name))
 
 
 def plt_show_acc(history, name):
@@ -125,7 +122,7 @@ def plt_show_acc(history, name):
     plt.ylabel('Accuracy')
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Test'], loc=0)
-    plt.savefig('./Result_graph/' + name + 'acc.png')
+    plt.savefig('./Result_graph/{}_acc.png'.format(name))
 
 
 def save_label_dict(class_label):
@@ -155,9 +152,9 @@ def main():
         model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         print("Training....")
-        history = model1.fit_generator(train_gen, steps_per_epoch=800, epochs=100, validation_data=valid_gen,
+        history = model1.fit_generator(train_gen, steps_per_epoch=5000, epochs=200, validation_data=valid_gen,
                                        validation_steps=100)
-        # origin : step 200 epoch 100
+        # 10000 / 200 next 30000 100 or 5000 / 300
 
         # Saving model
         # Save sturcture to json file, weight to h5 file.
@@ -174,7 +171,7 @@ def main():
         print("Test....")
         scores = model1.evaluate_generator(test_gen, steps=100)
         print("%s: %.2f%%" % (model1.metrics_names[1], scores[1] * 100))
-        print("loss : ", scores[0], "/ acc : ", scores[1])
+        print("Test loss : ", scores[0], "/ acc : ", scores[1])
 
     elif (number == "2"):
         from keras.models import load_model
@@ -211,23 +208,29 @@ def main():
     f2.close()
 
     # pred  -> not imagedatagenerator.
-    batchsize = 64
-    image_size = (255, 255)
-    pred_gen = ImageDataGenerator().flow_from_directory(
-        '/home/mll/Capstone/predict_image/',
-        class_mode='categorical',
-        batch_size=batchsize,
-        target_size=image_size
-    )
-    predictions = model1.predict_generator(pred_gen)
+    image_size = (48, 48)
+
+    img = Image.open('/home/mll/Capstone/predict_image/pred/asd.png')
+    img = img.resize(image_size, Image.ANTIALIAS)
+    img = img.convert('L')  # L
+    inv_image = ImageOps.invert(img)
+
+    # show image
+    inv_image.show()
+
+    # pred_gen = inv_image.reshape(48, 48, 1)
+    pred_gen = np.expand_dims(inv_image, axis=0)
+    pred_gen = pred_gen.reshape(1, 48, 48, 1)
+    predictions = model1.predict(pred_gen)
+
     np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
     import operator
     index, value = max(enumerate(predictions[0]), key=operator.itemgetter(1))
     pred_result = [name for name, target in label_dict.items() if target == index]
-    # print("-- pred label : ", index, "| acc : ", value)
-    # print("-- pred is : \n", pred_result)
+    print("-- pred label : ", index, "| acc : ", value)
+    print("-- pred is : \n", pred_result)
 
-    # recommand_top3
+    # recommand_top 10
     recommand(predictions, label_dict)
 
     print(" END! ")

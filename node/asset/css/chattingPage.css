@@ -95,6 +95,7 @@
   border-radius: 6px;
   font-size: 1.2vw;
   margin-left: 2%;
+<<<<<<< HEAD
 }
 /*캔버스 열고닫기 버튼*/
 .skatchStart{
@@ -131,6 +132,7 @@
 .me {
   position: relative;
   width: auto;
+  word-break: break-all; /*영문 줄바꿈*/
   background-color: #F7E600;
   padding: 1%; /*테두리 여백*/
   max-width: 50%; /*50%넘으면 줄바꿈되도록*/
@@ -155,6 +157,7 @@
 .other {
   position: relative;
   width: auto;
+  word-break: break-all; /*영문 줄바꿈*/
   background-color: white;
   padding:1%;
   max-width: 50%;
@@ -194,7 +197,7 @@
 }
 
 .recommend > div{
-  width: 100%;
+  width: auto;
    height: 10%;
    color: #556677;
    /*가로기준 10vw는 1%*/
@@ -209,11 +212,14 @@
 }
 
 .image_table{
-  display: table-row;
+  /* display: table-row; */
+  display: flex;
 }
 
 .image_container{
-  display: table-cell;
+  /* display: table-cell; */
+  display: inline-block;
+
   width: 55px;
   height: 55px;
   text-align: center;
@@ -221,20 +227,19 @@
 }
 
 .image_container img{
-  width: 100%;
-   height: 100%;
+  width: 55px;
+   height: 55px;
 }
 
 .draw{
   width: 100%;
-   height: 420px;
-   /* background-color:#ffffff; */
+   height: 450px;
    position:relative;
 }
 
 .buttons{
   border-top: 1px solid #797979;
-  height: 20%;
+  height: 10%;
   background-color: #9bbbd4;
   display:table-row;
 }
@@ -250,8 +255,9 @@
   margin-top: 1%;
   margin-right: 2%;
 }
+
 .msg_wrapper {
-  display : block;
+  display : inline-block;
   width : 100%;
 }
 @media (max-width: 880px){
@@ -268,4 +274,3 @@
     width: auto;
     height: auto;
   }
-}

@@ -28,17 +28,17 @@ def recommand(predictions, class_dict):
 # base64.txt -> image -> save folder
 remove_str = 'data:image/png;base64,'
 
-image_path = '/Users/heosanghun/Desktop/capston/node/image_predict/predict_image/12/out.png'
+image_path = '/home/student/2019_Capstone-design/node/image_predict/predict_image/12/out.png'
 g = open(image_path, 'wb')
 g.write(base64.b64decode(sys.argv[1][len(remove_str):]))
 g.close()
 
 
-model1 = load_model('/Users/heosanghun/Desktop/capston/node/image_predict/model.h5')
+model1 = load_model('/home/student/2019_Capstone-design/node/image_predict/model.h5')
 model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 # Print test prediction
 
-f2 = open('/Users/heosanghun/Desktop/capston/node/image_predict/label_dict.txt')
+f2 = open('/home/student/2019_Capstone-design/node/image_predict/label_dict.txt')
 label_dict = eval(f2.read())
 f2.close()
 
@@ -46,7 +46,7 @@ batchsize = 64
 image_size = (255, 255)
 
 pred_gen = ImageDataGenerator().flow_from_directory(
-    '/Users/heosanghun/Desktop/capston/node/image_predict/predict_image/',
+    '/home/student/2019_Capstone-design/node/image_predict/predict_image/',
     class_mode='categorical',
     batch_size=batchsize,
     target_size=image_size

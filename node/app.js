@@ -24,9 +24,13 @@ var {PythonShell} = require('python-shell');
 function make_option(data){
   var option = {
     mode: 'text',
+
     pythonPath: '',
+
     pythonOptions: ['-u'],
+
     scriptPath: './image_predict',
+
     args: [data]
   }
   return option;
@@ -36,6 +40,7 @@ function make_option(data){
 
 app.use('/css', express.static('./asset/css'))
 app.use('/js', express.static('./asset/js'))
+app.use('/data', express.static('./asset/data'))
 
 /* Get 방식으로 / 경로에 접속하면 실행 됨 */
 app.get('/', function(request, response) {
@@ -80,7 +85,6 @@ io.sockets.on('connection', function(socket) {
     /* 받은 데이터에 누가 보냈는지 이름을 추가 */
     data.name = socket.name
     console.log(data)
-    console.log("check")
     /* 보낸 사람을 제외한 나머지 유저에게 메시지 전송 */
     socket.broadcast.emit('update', data);
   })
@@ -96,8 +100,6 @@ io.sockets.on('connection', function(socket) {
     /* 보낸 사람을 제외한 나머지 유저에게 메시지 전송 */
     socket.broadcast.emit('update', data);
   })
-
-  
   socket.on('recommend', function(data) {
     /* 받은 데이터에 누가 보냈는지 이름을 추가 */
     data.name = socket.name
@@ -109,15 +111,10 @@ io.sockets.on('connection', function(socket) {
     PythonShell.run('image_predict.py', options, function (err, results) {
       if (err) throw err;
       console.log('results: %j', results);
-      console.log(results)
-      //results is  recommend img_list
-
       var img_list = Object.values(results)
-      socket.emit('update_re', img_list[0]);
+      socket.emit('update_re', img_list[1]);
     });
-    //data list
-    // var img_list = "./css/camera.png,./css/photoPlus.png,./css/conversationLogo.png"
-    // socket.emit('update_re', img_list);
+
   })
   /* 접속 종료 */
   socket.on('disconnect', function() {

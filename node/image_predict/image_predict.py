@@ -19,11 +19,17 @@ def recommand(predictions, class_dict):
 
     predict2 = sorted(predict, key=lambda x: x[1], reverse=True)
 
-    recommend1 = str([name for name, target in class_dict.items() if target == predict2[0][0]])
-    recommend2 = str([name for name, target in class_dict.items() if target == predict2[1][0]])
-    recommend3 = str([name for name, target in class_dict.items() if target == predict2[2][0]])
-    re_str = recommend1[2:len(recommend1)-2]+","+recommend2[2:len(recommend2)-2]+","+recommend3[2:len(recommend3)-2]
+    re_str = ""
+    for i in range(10):
+        recommend = [name for name, target in class_dict.items() if target == predict2[i][0]]
+        re_str = re_str + str(recommend)[2:len(recommend)-3]
+        if i == 9:
+            break
+        re_str += ","
+        # recommand_percent = predict2[i][1]
+        # print(recommand, " ", round(recommand_percent, 3) * 100, "%")\
     return re_str
+
 
 # base64.txt -> image -> save folder
 remove_str = 'data:image/png;base64,'

@@ -14,14 +14,14 @@ from PIL import Image, ImageOps
     |- Latest update : 11.05                |
     |- LTS model : v1.53                    |
     |- LTS model acc : 80.54%               |
-    |- Latest model : v2.12                 |
-    |- Latest model acc : 69%               |
+    |- Latest model : v2.20                 |
+    |- Latest model acc : 78%               |
     -----------------------------------------
     |- resize input (48,48,1)               |
     |- Performance goal : Accuracy 85% over |
-    |- now model : v2.18                    |
+    |- now model : v2.20                    |
     |- label : 100                          | 
-    |- Update : 11.07                       | 
+    |- Update : 11.11                       | 
     -----------------------------------------
 
 '''
@@ -150,7 +150,7 @@ def main():
         model1.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         print("Training....")
-        history = model1.fit_generator(train_gen, steps_per_epoch=1000, epochs=100,
+        history = model1.fit_generator(train_gen, steps_per_epoch=500, epochs=100,
                                        validation_data=valid_gen, validation_steps=100)
         # 10000 / 200 next 30000 100 or 5000 / 300
 

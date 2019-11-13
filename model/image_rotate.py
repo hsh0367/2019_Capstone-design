@@ -15,7 +15,7 @@ def folder_list(file_path):
         label_list.append(data_folder)
         print(folder)
         #build fix folder
-        target_path = '/home/mll/Capstone/fix_image_set'
+        target_path = '/Users/gangsin-won/2019_Capstone-design/fix_image_set'
         print("{} to {} dataset...".format(target_path, data_folder))
         os.mkdir(target_path + "/train/" + data_folder )
         os.mkdir(target_path + "/valid/" + data_folder)
@@ -57,7 +57,7 @@ def folder_list(file_path):
 def main():
 
     print("Image rorate start...")
-    folder_list("/home/mll/Capstone/image_set")
+    folder_list("/Users/gangsin-won/2019_Capstone-design/image_set")
 
 
 if __name__ == "__main__":

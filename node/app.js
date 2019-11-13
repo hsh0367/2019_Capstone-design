@@ -112,7 +112,7 @@ io.sockets.on('connection', function(socket) {
       if (err) throw err;
       console.log('results: %j', results);
       var img_list = Object.values(results)
-      socket.emit('update_re', img_list[1]);
+      socket.emit('update_re', img_list[0]);
     });
 
   })
@@ -126,6 +126,6 @@ io.sockets.on('connection', function(socket) {
 })
 
 /* 서버를 8080 포트로 listen */
-server.listen(8080, function() {
+server.listen(4545, function() {
   console.log('서버 실행 중..')
 })

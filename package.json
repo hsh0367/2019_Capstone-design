@@ -21,6 +21,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "nodemon": "^1.19.3",
+    "python-shell": "^1.0.8",
     "socket.io": "^2.3.0",
     "socketio": "^1.0.0"
   }

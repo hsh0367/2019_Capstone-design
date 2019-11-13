@@ -1,7 +1,7 @@
 import matplotlib
 import numpy as np
 import os
-from PIL import Image,ImageOps
+from PIL import Image
 from keras.preprocessing.image import ImageDataGenerator
 import operator
 from keras.models import load_model
@@ -9,7 +9,6 @@ from keras.preprocessing import image
 import base64
 import ast
 import sys
-
 
 def recommand(predictions, class_dict):
     # Recommend top 3
@@ -49,19 +48,16 @@ f2 = open('/home/student/2019_Capstone-design/node/image_predict/label_dict.txt'
 label_dict = eval(f2.read())
 f2.close()
 
-batchsize = 32
-image_size = (48, 48)
+batchsize = 64
+image_size = (255, 255)
 
-img = Image.open('/home/student/2019_Capstone-design/node/image_predict/predict_image/12/out.png')
-img = img.resize(image_size, Image.ANTIALIAS)
-img = img.convert('L')
-inv_image = ImageOps.invert(img)
-
-pred_gen = np.expand_dims(inv_image, axis=0)
-pred_gen = pred_gen.reshape(1,48,48,1)
-
-predictions = model1.predict(pred_gen)
-
+pred_gen = ImageDataGenerator().flow_from_directory(
+    '/home/student/2019_Capstone-design/node/image_predict/predict_image/',
+    class_mode='categorical',
+    batch_size=batchsize,
+    target_size=image_size
+)
+predictions = model1.predict_generator(pred_gen)
 np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
 import operator
 index, value = max(enumerate(predictions[0]), key=operator.itemgetter(1))
@@ -69,4 +65,4 @@ pred_result = [name for name, target in label_dict.items() if target == index]
 
 #recommand_top3
 re_list = recommand(predictions, label_dict)
-print(re_list, sys.argv[1])
+print(re_list)

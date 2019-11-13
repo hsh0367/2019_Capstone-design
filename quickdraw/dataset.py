@@ -10,7 +10,7 @@ from subprocess import call
 class QuickDrawData:
     bin_folder_path = ""
     bin_list = []
-    save_folder = "/home/mll601-2/2019_Capstone/2019_Capstone-design/image_set"
+    save_folder = "/Users/gangsin-won/2019_Capstone-design/image_set"
     remove_name = "full%2Fbinary%2F"
 
     def init(self, bin_folder_path, bin_list):
@@ -65,7 +65,7 @@ class QuickDrawData:
             plt.close()
             print("save png:", save_path)
             count += 1
-            if count == 1:
+            if count == 15000:
                 break
 
     def load_binfile(self, files):
@@ -127,7 +127,7 @@ if __name__ == "__main__":
     quickdata.run()
 
 
-    call(["python3", "/home/mll/Capstone/2019_Capstone-design/model/image_rotate.py"])
+    # call(["python3", "/home/mll/Capstone/2019_Capstone-design/model/image_rotate.py"])
 
 
 

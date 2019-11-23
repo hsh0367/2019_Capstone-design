@@ -22,6 +22,9 @@
 2. 이미지 추천 머신러닝 모델을 채팅에 적용
 3. 사용자가 많아질수록 더 정확한 검색결과 제공
 
+### 1.5 작품 설명 포스터
+<img width=80% src="https://user-images.githubusercontent.com/36693355/69471478-b5aceb80-0de2-11ea-8581-a3182d1509ec.png"/>
+
 * * *
 
 ## 2. 주요 기술
@@ -46,3 +49,10 @@ Ex. ADD : First Registration #1
 5) OTHER : 문서작업, 이미지 추가, 파일위치변경, 병합 등 코드 수정이 발생하지 않는 경우에 사용  
 
 설명은 명령문으로 간결하게, 이슈번호는 이슈에서 찾아서 #번호로 작성
+
+### 3.2 작품 수상내역
+<img src="https://user-images.githubusercontent.com/36693355/69471500-f147b580-0de2-11ea-980d-0eddaea469c1.jpg"/>
+
+1. 오픈소스 어워드 입상   
+2. 강원 ICT분야 SW작품 및 창의 아이디어 경진대회 ICT분야 SW작품 **우수상**  
+3. IT대학 졸업작품 **최우수상**   

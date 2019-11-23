@@ -53,6 +53,6 @@ Ex. ADD : First Registration #1
 ### 3.2 작품 수상내역
 <img src="https://user-images.githubusercontent.com/36693355/69471500-f147b580-0de2-11ea-980d-0eddaea469c1.jpg"/>
 
-1. 오픈소스 어워드 입상   
-2. 강원 ICT분야 SW작품 및 창의 아이디어 경진대회 ICT분야 SW작품 **우수상**  
-3. IT대학 졸업작품 **최우수상**   
+- 오픈소스 어워드 입상   
+- 강원 ICT분야 SW작품 및 창의 아이디어 경진대회 ICT분야 SW작품 **우수상**  
+- IT대학 졸업작품 **최우수상**   

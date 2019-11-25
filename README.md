@@ -23,7 +23,7 @@
 3. 사용자가 많아질수록 더 정확한 검색결과 제공
 
 ### 1.5 작품 설명 포스터
-<img width=80% src="https://user-images.githubusercontent.com/36693355/69544582-611c9280-0fd3-11ea-96be-bf55b9c091af.jpg"/>
+<img width=80% src="https://user-images.githubusercontent.com/36693355/69544747-b48ee080-0fd3-11ea-94d3-73320e8b66fe.jpg"/>
 
 * * *
 
